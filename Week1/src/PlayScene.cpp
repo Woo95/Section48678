@@ -124,52 +124,52 @@ void PlayScene::start()
 	addChild(m_pPlayer);
 	m_playerFacingRight = true;
 
-	// Back Button
-	m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
-	m_pBackButton->getTransform()->position = glm::vec2(300.0f, 400.0f);
-	m_pBackButton->addEventListener(CLICK, [&]()-> void
-	{
-		m_pBackButton->setActive(false);
-		TheGame::Instance().changeSceneState(START_SCENE);
-	});
+	//// Back Button
+	//m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
+	//m_pBackButton->getTransform()->position = glm::vec2(300.0f, 400.0f);
+	//m_pBackButton->addEventListener(CLICK, [&]()-> void
+	//{
+	//	m_pBackButton->setActive(false);
+	//	TheGame::Instance().changeSceneState(START_SCENE);
+	//});
 
-	m_pBackButton->addEventListener(MOUSE_OVER, [&]()->void
-	{
-		m_pBackButton->setAlpha(128);
-	});
+	//m_pBackButton->addEventListener(MOUSE_OVER, [&]()->void
+	//{
+	//	m_pBackButton->setAlpha(128);
+	//});
 
-	m_pBackButton->addEventListener(MOUSE_OUT, [&]()->void
-	{
-		m_pBackButton->setAlpha(255);
-	});
-	addChild(m_pBackButton);
+	//m_pBackButton->addEventListener(MOUSE_OUT, [&]()->void
+	//{
+	//	m_pBackButton->setAlpha(255);
+	//});
+	//addChild(m_pBackButton);
 
-	// Next Button
-	m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", NEXT_BUTTON);
-	m_pNextButton->getTransform()->position = glm::vec2(500.0f, 400.0f);
-	m_pNextButton->addEventListener(CLICK, [&]()-> void
-	{
-		m_pNextButton->setActive(false);
-		TheGame::Instance().changeSceneState(END_SCENE);
-	});
+	//// Next Button
+	//m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", NEXT_BUTTON);
+	//m_pNextButton->getTransform()->position = glm::vec2(500.0f, 400.0f);
+	//m_pNextButton->addEventListener(CLICK, [&]()-> void
+	//{
+	//	m_pNextButton->setActive(false);
+	//	TheGame::Instance().changeSceneState(END_SCENE);
+	//});
 
-	m_pNextButton->addEventListener(MOUSE_OVER, [&]()->void
-	{
-		m_pNextButton->setAlpha(128);
-	});
+	//m_pNextButton->addEventListener(MOUSE_OVER, [&]()->void
+	//{
+	//	m_pNextButton->setAlpha(128);
+	//});
 
-	m_pNextButton->addEventListener(MOUSE_OUT, [&]()->void
-	{
-		m_pNextButton->setAlpha(255);
-	});
+	//m_pNextButton->addEventListener(MOUSE_OUT, [&]()->void
+	//{
+	//	m_pNextButton->setAlpha(255);
+	//});
 
-	addChild(m_pNextButton);
+	//addChild(m_pNextButton);
 
-	/* Instructions Label */
-	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
-	m_pInstructionsLabel->getTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 500.0f);
+	///* Instructions Label */
+	//m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
+	//m_pInstructionsLabel->getTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 500.0f);
 
-	addChild(m_pInstructionsLabel);
+	//addChild(m_pInstructionsLabel);
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
