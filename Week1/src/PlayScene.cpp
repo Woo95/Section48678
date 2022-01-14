@@ -103,12 +103,28 @@ void PlayScene::handleEvents()
 			//m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT); Currently NO ANIMATION
 			const auto current_position = m_pPlayer->getTransform()->position;
 			m_pPlayer->getTransform()->position = current_position + glm::vec2(0.0f, -5.0f);
+			if (m_playerFacingRight)
+			{
+				m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT);
+			}
+			else
+			{
+				m_pPlayer->setAnimationState(PLAYER_RUN_LEFT);
+			}
 		}
 		else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
 		{
 			//m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT); Currently NO ANIMATION
 			const auto current_position = m_pPlayer->getTransform()->position;
 			m_pPlayer->getTransform()->position = current_position + glm::vec2(0.0f, +5.0f);
+			if (m_playerFacingRight)
+			{
+				m_pPlayer->setAnimationState(PLAYER_RUN_RIGHT);
+			}
+			else
+			{
+				m_pPlayer->setAnimationState(PLAYER_RUN_LEFT);
+			}
 		}
 		/*}*/
 
@@ -211,12 +227,12 @@ void PlayScene::GUI_Function() const
 
 	ImGui::Separator();
 
-	static float float3[3] = { 0.0f, 1.0f, 1.5f };
-	if(ImGui::SliderFloat3("My Slider", float3, 0.0f, 2.0f))
+	static float float2[2] = { m_pPlaneSprite->getTransform()->position.x, m_pPlaneSprite->getTransform()->position.y };
+	if(ImGui::SliderFloat2("Plane Position", float2, 0.0f, 800.0f))
 	{
-		std::cout << float3[0] << std::endl;
-		std::cout << float3[1] << std::endl;
-		std::cout << float3[2] << std::endl;
+		m_pPlaneSprite->getTransform()->position = glm::vec2(float2[0], float2[1]);
+		std::cout << float2[0] << std::endl;
+		std::cout << float2[1] << std::endl;
 		std::cout << "---------------------------\n";
 	}
 	
