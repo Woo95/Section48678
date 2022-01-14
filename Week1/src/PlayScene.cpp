@@ -117,10 +117,12 @@ void PlayScene::start()
 	
 	// Plane Sprite
 	m_pPlaneSprite = new Plane();
+	m_pPlaneSprite->getTransform()->position = glm::vec2(400.0f, 100.0f);
 	addChild(m_pPlaneSprite);
 
 	// Player Sprite
 	m_pPlayer = new Player();
+	m_pPlayer->getTransform()->position = glm::vec2(400.0f, 500.0f);
 	addChild(m_pPlayer);
 	m_playerFacingRight = true;
 
