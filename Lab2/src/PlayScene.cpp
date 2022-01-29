@@ -57,6 +57,9 @@ void PlayScene::start()
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
+	m_pTarget = new Target(); // Instantiating a new Target object - allocating memory on the Heap
+	addChild(m_pTarget);
+
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
 

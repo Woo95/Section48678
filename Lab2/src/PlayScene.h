@@ -4,6 +4,8 @@
 
 #include "Scene.h"
 
+#include "Target.h"
+
 class PlayScene : public Scene
 {
 public:
@@ -23,6 +25,8 @@ private:
 	
 	glm::vec2 m_mousePosition;
 
+	// Game Objects
+	Target* m_pTarget;
 
 };
 
