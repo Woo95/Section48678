@@ -60,6 +60,8 @@ void PlayScene::start()
 	m_pTarget = new Target(); // Instantiating a new Target object - allocating memory on the Heap
 	addChild(m_pTarget);
 
+	m_pSpaceShip = new SpaceShip();
+	addChild(m_pSpaceShip);
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
 
