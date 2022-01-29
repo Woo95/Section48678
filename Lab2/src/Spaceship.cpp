@@ -25,7 +25,7 @@ void SpaceShip::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the space_ship
-	TextureManager::Instance().draw("space_ship", x, y, 0, 255, true);
+	TextureManager::Instance().draw("space_ship", x, y, 0, 255, isCentered());
 }
 
 void SpaceShip::update()

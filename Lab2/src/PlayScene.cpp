@@ -19,12 +19,24 @@ PlayScene::~PlayScene()
 void PlayScene::draw()
 {
 	drawDisplayList();
+	//// draw target bounding box
+	//Util::DrawRect(m_pTarget->getTransform()->position - glm::vec2(m_pTarget->getWidth() * 0.5f, m_pTarget->getHeight()*0.5f), 
+	//	m_pTarget->getWidth(), m_pTarget->getHeight());
+
+	Util::DrawCircle(m_pTarget->getTransform()->position, m_pTarget->getWidth() * 0.5f);
+
+	// draw spaceship bounding box
+	Util::DrawRect(m_pSpaceShip->getTransform()->position - glm::vec2(m_pSpaceShip->getWidth() * 0.5f, m_pSpaceShip->getHeight() * 0.5f),
+		m_pSpaceShip->getWidth(), m_pSpaceShip->getHeight());
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 255, 255, 255, 255);
 }
 
 void PlayScene::update()
 {
 	updateDisplayList();
+
+	//CollisionManager::AABBCheck(m_pTarget, m_pSpaceShip);
+	CollisionManager::circleAABBCheck(m_pTarget, m_pSpaceShip);
 }
 
 void PlayScene::clean()
