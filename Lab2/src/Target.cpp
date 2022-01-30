@@ -1,5 +1,6 @@
 #include "Target.h"
 #include "TextureManager.h"
+#include "SoundManager.h"
 
 
 Target::Target()
@@ -14,6 +15,9 @@ Target::Target()
 	getRigidBody()->isColliding = false;
 
 	setType(TARGET);
+
+	// load the yay sound
+	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 }
 
 Target::~Target()
