@@ -34,9 +34,9 @@ public:
 
 private:
 	void m_changeDirection();
-	float m_currentHeading;
-	glm::vec2 m_currentDirection;
-	glm::vec2 m_targetPosition;
+	float m_currentHeading;	// angle the ship is looking
+	glm::vec2 m_currentDirection; // vector the ship is moving
+	glm::vec2 m_targetPosition;	// vector representing the target.position
 
 	// LOS
 	float m_LOSDistance;

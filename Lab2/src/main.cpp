@@ -27,9 +27,11 @@ int main(int argc, char* args[])
 		TheGame::Instance().update();
 		TheGame::Instance().render();
 
+		// creates a "fixed" time-step
 		frameTime = SDL_GetTicks() - frameStart;
 		if (frameTime < DELAY_TIME)
 		{
+			// game will wait until DELAYY_TIME has elapsed
 			SDL_Delay(int(DELAY_TIME - frameTime));
 		}
 
