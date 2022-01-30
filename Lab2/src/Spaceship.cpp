@@ -88,18 +88,16 @@ void SpaceShip::setDesiredVelocity(const glm::vec2 target_position)
 
 void SpaceShip::Seek()
 {
-
 }
 
 void SpaceShip::LookWhereYoureGoing()
 {
-
 }
 
 void SpaceShip::m_move()
 {
-	//								 new Position	 position term	  velocity term			   acceleration
-	// kinematic equation for motion --> Pf =			Pi	+			Vi*(time) +			(0.5)*Ai*(time * time)
+	//                                   final Position     position term    velocity term     acceleration term
+	// kinematic equation for motion --> Pf            =      Pi     +     Vi*(time)    +   (0.5)*Ai*(time * time)
 
 	const float dt = TheGame::Instance().getDeltaTime();
 
@@ -109,23 +107,16 @@ void SpaceShip::m_move()
 	auto velocity_plus_acceleration = getRigidBody()->velocity + getRigidBody()->acceleration;
 
 	// compute the velocity term
-	const glm::vec2 velocity_term = getRigidBody()->velocity *dt;
+	const glm::vec2 velocity_term = getRigidBody()->velocity * dt;
 
 	// compute the acceleration term
 	const glm::vec2 acceleration_term = getRigidBody()->acceleration * 0.5f * dt;
 
+
 	// compute the new position
 	glm::vec2 final_position = initial_position + velocity_term + acceleration_term;
 
-	getTransform()->position = final_position * getMaxSpeed();
+	getTransform()->position = final_position;
 
 	getRigidBody()->velocity += getRigidBody()->acceleration;
 }
-
-
-
-
-
-
-
-

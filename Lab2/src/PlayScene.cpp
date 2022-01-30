@@ -26,7 +26,7 @@ void PlayScene::draw()
 	//Util::DrawCircle(m_pTarget->getTransform()->position, m_pTarget->getWidth() * 0.5f);
 
 	//// draw spaceship bounding box
-	//Util::DrawRect(m_pSpaceShip->getTransform()->position - glm::vec2(m_pSpaceShip->getWidth() * 0.5f, m_pSpaceShip->getHeight() * 0.5f),
+	//Util::DrawRect(m_pSpaceShip->getTransform()->position - glm::vec2(m_pSpaceShip->getWidth() * 0.5f, m_pSpaceShip->getHeight() * 0.5f), 
 	//	m_pSpaceShip->getWidth(), m_pSpaceShip->getHeight());
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 255, 255, 255, 255);
 }
@@ -73,7 +73,7 @@ void PlayScene::start()
 	addChild(m_pTarget);
 
 	m_pSpaceShip = new SpaceShip();
-	m_pSpaceShip->setCurrentHeading(0.0f);
+	m_pSpaceShip->setCurrentHeading(0.0);
 	m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
 	m_pSpaceShip->getRigidBody()->velocity = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getMaxSpeed();
 	m_pSpaceShip->getRigidBody()->acceleration = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getAccelerationRate();
