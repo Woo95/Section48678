@@ -74,8 +74,10 @@ void PlayScene::start()
 
 	m_pSpaceShip = new SpaceShip();
 	m_pSpaceShip->setCurrentHeading(0.0f);
+	m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
 	m_pSpaceShip->getRigidBody()->velocity = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getMaxSpeed();
 	m_pSpaceShip->getRigidBody()->acceleration = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getAccelerationRate();
+	m_pSpaceShip->setEnabled(false);
 	addChild(m_pSpaceShip);
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
@@ -92,11 +94,43 @@ void PlayScene::GUI_Function() const
 
 	ImGui::Separator();
 
+	// target properties
+
 	static float position[2] = {m_pTarget->getTransform()->position.x, m_pTarget->getTransform()->position.y };
 	if(ImGui::SliderFloat2("Target Position", position, 0.0f, 800.0f))
 	{
 		m_pTarget->getTransform()->position = glm::vec2(position[0], position[1]);
+		m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
 	}
 	
+	ImGui::Separator();
+
+	// spaceship properties
+	static bool toggleSeek = m_pSpaceShip->isEnabled();
+	if (ImGui::Checkbox("Toggle Seek", &toggleSeek))
+	{
+		m_pSpaceShip->setEnabled(toggleSeek);
+	}
+
+	static float speed = m_pSpaceShip->getMaxSpeed();
+	if (ImGui::SliderFloat("Max Speed", &speed, 0.0f, 100.0f))
+	{
+		m_pSpaceShip->setMaxSpeed(speed);
+		m_pSpaceShip->getRigidBody()->velocity = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getMaxSpeed();
+	}
+
+	static float acceleration = m_pSpaceShip->getAccelerationRate();
+	if (ImGui::SliderFloat("Acceleration Rate", &acceleration, 0.0f, 50.0f))
+	{
+		m_pSpaceShip->setAccelerationRate(acceleration);
+		m_pSpaceShip->getRigidBody()->acceleration = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getAccelerationRate();
+	}
+
+	static float turn_rate = m_pSpaceShip->getTurnRate();
+	if (ImGui::SliderFloat("Turn Rate", &turn_rate, 0.0f, 20.0f))
+	{
+		m_pSpaceShip->setTurnRate(turn_rate);
+	}
+
 	ImGui::End();
 }
