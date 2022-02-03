@@ -78,10 +78,9 @@ bool CollisionManager::AABBCheck(GameObject* object1, GameObject* object2)
 
 			switch (object2->getType())
 			{
-
 				case AGENT:
 					std::cout << "Collision with SpaceShip!" << std::endl;
-					SoundManager::Instance().playSound("yay", 0);
+					SoundManager::Instance().playSound("boom", 0);
 					break;
 				default:
 

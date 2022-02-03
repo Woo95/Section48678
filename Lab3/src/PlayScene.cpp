@@ -45,7 +45,7 @@ void PlayScene::update()
 	{
 		//CollisionManager::squaredRadiusCheck(m_pSpaceShip, m_pTarget);
 		CollisionManager::circleAABBCheck(m_pTarget, m_pSpaceShip);
-		//CollisionManager::AABBCheck(m_pTarget, m_pSpaceShip);
+		CollisionManager::AABBCheck(m_pObstacle, m_pSpaceShip);
 		CollisionManager::rotateAABB(m_pSpaceShip, m_pSpaceShip->getCurrentHeading());
 	}
 }
@@ -81,14 +81,6 @@ void PlayScene::start()
 	m_guiTitle = "Play Scene";
 	m_bDebugView = false;
 
-	// Added the audio load lines 
-	SoundManager::Instance().load("../Assets/audio/mainBGM.mp3", "mainBGM", SOUND_MUSIC);
-	//SoundManager::Instance().playMusic("mainBGM", -1, 0);
-
-	SoundManager::Instance().load("../Assets/audio/buff.wav", "buff", SOUND_SFX);
-	//SoundManager::Instance().playSound("buff", 0, -1);
-	SoundManager::Instance().load("../Assets/audio/engine.ogg", "engine", SOUND_SFX);
-	//SoundManager::Instance().playSound("engine", 0, -1);
 
 	m_pTarget = new Target(); // instantiating a new Target object - allocating memory on the Heap
 	addChild(m_pTarget);
@@ -98,7 +90,21 @@ void PlayScene::start()
 	m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
 	m_pSpaceShip->getRigidBody()->acceleration = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getAccelerationRate();
 	m_pSpaceShip->setEnabled(false);
+
 	addChild(m_pSpaceShip);
+
+	m_pObstacle = new Obstacle();
+	addChild(m_pObstacle);
+
+	// Add two audio load lines 
+	//SoundManager::Instance().load("../Assets/audio/mainBGM.mp3", "mainBGM", SOUND_MUSIC);
+	//SoundManager::Instance().playMusic("mainBGM", -1, 0);
+
+	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
+	//SoundManager::Instance().playSound("yay", 0, -1);
+	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "boom", SOUND_SFX);
+	//SoundManager::Instance().playSound("boom", 0, -1);
+
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
@@ -130,6 +136,12 @@ void PlayScene::GUI_Function()
 	{
 		m_pTarget->getTransform()->position = glm::vec2(position[0], position[1]);
 		m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
+	}
+
+	static float obstacle[2] = { m_pObstacle->getTransform()->position.x, m_pObstacle->getTransform()->position.y };
+	if (ImGui::SliderFloat2("Obstacle Position", obstacle, 0.0f, 800.0f))
+	{
+		m_pObstacle->getTransform()->position = glm::vec2(obstacle[0], obstacle[1]);
 	}
 
 	ImGui::Separator();
