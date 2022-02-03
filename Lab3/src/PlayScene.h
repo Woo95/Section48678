@@ -33,6 +33,8 @@ private:
 
 	// Debug bool
 	bool m_bDebugView;
+
+	void doWhiskerCollision();
 };
 
 #endif /* defined (__PLAY_SCENE__) */

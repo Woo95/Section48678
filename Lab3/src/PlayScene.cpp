@@ -52,6 +52,7 @@ void PlayScene::update()
 		//CollisionManager::squaredRadiusCheck(m_pSpaceShip, m_pTarget);
 		CollisionManager::circleAABBCheck(m_pTarget, m_pSpaceShip);
 		CollisionManager::AABBCheck(m_pObstacle, m_pSpaceShip);
+		doWhiskerCollision();
 		CollisionManager::rotateAABB(m_pSpaceShip, m_pSpaceShip->getCurrentHeading());
 	}
 }
@@ -201,4 +202,33 @@ void PlayScene::GUI_Function()
 	}
 	
 	ImGui::End();
+}
+
+void PlayScene::doWhiskerCollision()
+{
+	SDL_Rect box = { (int)m_pObstacle->getTransform()->position.x - m_pObstacle->getWidth() * 0.5f,
+	(int)m_pObstacle->getTransform()->position.y - m_pObstacle->getHeight() * 0.5f,
+	(int)m_pObstacle->getWidth(), (int)m_pObstacle->getHeight() };
+
+	SDL_Point ship_origin = { (int)m_pSpaceShip->getTransform()->position.x, (int)m_pSpaceShip->getTransform()->position.y };
+	// End points for whiskers:
+	SDL_Point left = { (int)m_pSpaceShip->getLeftLOSEndPoint().x, (int)m_pSpaceShip->getLeftLOSEndPoint().y };
+	SDL_Point middle = { (int)m_pSpaceShip->getMiddleLOSEndPoint().x, (int)m_pSpaceShip->getMiddleLOSEndPoint().y };
+	SDL_Point right = { (int)m_pSpaceShip->getRightLOSEndPoint().x, (int)m_pSpaceShip->getRightLOSEndPoint().y };
+
+	bool collisions[3] = { 0,0,0 }; // Refactoring: use getCollisionWhiskers from spaceship
+
+	SDL_Point ship = ship_origin; // Something really annoying in the SDL method is that the lines get clipped, so we need to reset the lines.
+	collisions[0] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &left.x, &left.y);
+	ship = ship_origin;
+	collisions[1] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &middle.x, &middle.y);
+	ship = ship_origin;
+	collisions[2] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &right.x, &right.y);
+
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		m_pSpaceShip->getCollisionWhiskers()[i] = collisions[i];
+		m_pSpaceShip->setLineColor(i, (collisions[i] ? glm::vec4(1, 0, 0, 1) : glm::vec4(0, 1, 0, 1)));
+	}
+
 }
