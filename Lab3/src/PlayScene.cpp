@@ -30,6 +30,12 @@ void PlayScene::draw()
 		{
 			//Util::DrawCircle(m_pSpaceShip->getTransform()->position, Util::max(m_pSpaceShip->getWidth() * 0.5f, m_pSpaceShip->getHeight() * 0.5f));
 			Util::DrawRect(m_pSpaceShip->getTransform()->position - glm::vec2(m_pSpaceShip->getWidth() * 0.5f, m_pSpaceShip->getHeight() * 0.5f), m_pSpaceShip->getWidth(), m_pSpaceShip->getHeight());
+	
+			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getLeftLOSEndPoint(), m_pSpaceShip->getLineColor(0));
+			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getMiddleLOSEndPoint(), m_pSpaceShip->getLineColor(1));
+			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getRightLOSEndPoint(), m_pSpaceShip->getLineColor(2));
+			//Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getLeftSideLOSEndPoint(), m_pSpaceShip->getLineColor(3));
+			//Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getRightSideLOSEndPoint(), m_pSpaceShip->getLineColor(4));
 		}
 
 	}
@@ -90,6 +96,7 @@ void PlayScene::start()
 	m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
 	m_pSpaceShip->getRigidBody()->acceleration = m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getAccelerationRate();
 	m_pSpaceShip->setEnabled(false);
+	m_pSpaceShip->setWhiskerAngle(45.0f);
 
 	addChild(m_pSpaceShip);
 
@@ -170,6 +177,12 @@ void PlayScene::GUI_Function()
 	if (ImGui::SliderFloat("Turn Rate", &turn_rate, 0.0f, 20.0f))
 	{
 		m_pSpaceShip->setTurnRate(turn_rate);
+	}
+
+	static float whisker_angle = m_pSpaceShip->getWhiskerAngle();
+	if (ImGui::SliderFloat("Whisker Angle", &whisker_angle, 10.0f, 60.0f))
+	{
+		m_pSpaceShip->updateWhiskers(whisker_angle);
 	}
 
 	if(ImGui::Button("Reset"))

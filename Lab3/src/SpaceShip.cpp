@@ -22,6 +22,8 @@ SpaceShip::SpaceShip()
 	m_turnRate = 5.0f; // a maximum number of degrees to turn each time-step
 	m_accelerationRate = 4.0f; // a maximum number of pixels to add to the velocity each frame
 	
+	setLOSDistance(300.0f); // Length of the middle ray
+
 	setType(AGENT);
 }
 
@@ -116,6 +118,7 @@ void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction)
 			setCurrentHeading(getCurrentHeading() - getTurnRate());
 		}
 	}	
+	updateWhiskers(getWhiskerAngle());
 }
 
 void SpaceShip::m_move()
