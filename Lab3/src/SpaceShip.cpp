@@ -19,7 +19,7 @@ SpaceShip::SpaceShip()
 
 	// starting motion properties
 	m_maxSpeed = 20.0f; // a maximum number of pixels moved per frame
-	m_turnRate = 5.0f; // a maximum number of degrees to turn each time-step
+	m_turnRate = 4.5f; // a maximum number of degrees to turn each time-step
 	m_accelerationRate = 4.0f; // a maximum number of pixels to add to the velocity each frame
 	
 	setLOSDistance(300.0f); // Length of the middle ray
@@ -123,11 +123,15 @@ void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction)
 	{
 		target_rotation += getTurnRate() * turn_sensitivity;
 	}
-	//else if (getCollisionWhiskers()[1]) // middle collsion
-	//{
-	//	target_rotation += getTurnRate() * turn_sensitivity;
-	//}
 	else if (getCollisionWhiskers()[2]) // If right collision
+	{
+		target_rotation -= getTurnRate() * turn_sensitivity;
+	}
+	else if (getCollisionWhiskers()[3]) // If leftSide collision
+	{
+		target_rotation += getTurnRate() * turn_sensitivity;
+	}
+	else if (getCollisionWhiskers()[4]) // If rightSide collision
 	{
 		target_rotation -= getTurnRate() * turn_sensitivity;
 	}
