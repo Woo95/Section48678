@@ -123,6 +123,10 @@ void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction)
 	{
 		target_rotation += getTurnRate() * turn_sensitivity;
 	}
+	//else if (getCollisionWhiskers()[1]) // middle collsion
+	//{
+	//	target_rotation += getTurnRate() * turn_sensitivity;
+	//}
 	else if (getCollisionWhiskers()[2]) // If right collision
 	{
 		target_rotation -= getTurnRate() * turn_sensitivity;

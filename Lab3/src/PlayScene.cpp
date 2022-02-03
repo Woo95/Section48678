@@ -34,8 +34,8 @@ void PlayScene::draw()
 			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getLeftLOSEndPoint(), m_pSpaceShip->getLineColor(0));
 			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getMiddleLOSEndPoint(), m_pSpaceShip->getLineColor(1));
 			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getRightLOSEndPoint(), m_pSpaceShip->getLineColor(2));
-			//Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getLeftSideLOSEndPoint(), m_pSpaceShip->getLineColor(3));
-			//Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getRightSideLOSEndPoint(), m_pSpaceShip->getLineColor(4));
+			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getLeftSideLOSEndPoint(), m_pSpaceShip->getLineColor(3));
+			Util::DrawLine(m_pSpaceShip->getTransform()->position, m_pSpaceShip->getRightSideLOSEndPoint(), m_pSpaceShip->getLineColor(4));
 		}
 
 	}
@@ -215,8 +215,10 @@ void PlayScene::doWhiskerCollision()
 	SDL_Point left = { (int)m_pSpaceShip->getLeftLOSEndPoint().x, (int)m_pSpaceShip->getLeftLOSEndPoint().y };
 	SDL_Point middle = { (int)m_pSpaceShip->getMiddleLOSEndPoint().x, (int)m_pSpaceShip->getMiddleLOSEndPoint().y };
 	SDL_Point right = { (int)m_pSpaceShip->getRightLOSEndPoint().x, (int)m_pSpaceShip->getRightLOSEndPoint().y };
+	SDL_Point leftSide = { (int)m_pSpaceShip->getLeftSideLOSEndPoint().x, (int)m_pSpaceShip->getLeftSideLOSEndPoint().y };
+	SDL_Point rightSide = { (int)m_pSpaceShip->getRightSideLOSEndPoint().x, (int)m_pSpaceShip->getRightSideLOSEndPoint().y };
 
-	bool collisions[3] = { 0,0,0 }; // Refactoring: use getCollisionWhiskers from spaceship
+	bool collisions[5] = { 0,0,0,0,0 }; // Refactoring: use getCollisionWhiskers from spaceship
 
 	SDL_Point ship = ship_origin; // Something really annoying in the SDL method is that the lines get clipped, so we need to reset the lines.
 	collisions[0] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &left.x, &left.y);
@@ -224,8 +226,12 @@ void PlayScene::doWhiskerCollision()
 	collisions[1] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &middle.x, &middle.y);
 	ship = ship_origin;
 	collisions[2] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &right.x, &right.y);
+	ship = ship_origin;
+	collisions[3] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &leftSide.x, &leftSide.y);
+	ship = ship_origin;
+	collisions[4] = SDL_IntersectRectAndLine(&box, &ship.x, &ship.y, &rightSide.x, &rightSide.y);
 
-	for (unsigned int i = 0; i < 3; i++)
+	for (unsigned int i = 0; i < 5; i++)
 	{
 		m_pSpaceShip->getCollisionWhiskers()[i] = collisions[i];
 		m_pSpaceShip->setLineColor(i, (collisions[i] ? glm::vec4(1, 0, 0, 1) : glm::vec4(0, 1, 0, 1)));

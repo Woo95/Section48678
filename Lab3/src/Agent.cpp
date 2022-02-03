@@ -6,7 +6,7 @@
 
 Agent::Agent()
 {
-	for (unsigned int i = 0; i < 3; i++)
+	for (unsigned int i = 0; i < 5; i++)
 	{
 		m_lineColor[i] = glm::vec4(0, 1, 0, 1);
 		m_collisionWhiskers[i] = false;
@@ -167,13 +167,13 @@ void Agent::updateWhiskers(float a)
 	y = cos((getCurrentHeading() + m_whiskerAngle + 90) * Util::Deg2Rad);
 	setRightLOSEndPoint(getTransform()->position + glm::vec2(x, -y) * getLOSDistance() * 0.75f);
 
-	//x = sin((getCurrentHeading() - m_whiskerAngle + 45) * Util::Deg2Rad);
-	//y = cos((getCurrentHeading() - m_whiskerAngle + 45) * Util::Deg2Rad);
-	//setRightSideLOSEndPoint(getTransform()->position + glm::vec2(x, -y) * getLOSDistance() * 0.75f);
+	x = sin((getCurrentHeading() - m_whiskerAngle + 45) * Util::Deg2Rad);
+	y = cos((getCurrentHeading() - m_whiskerAngle + 45) * Util::Deg2Rad);
+	setLeftSideLOSEndPoint(getTransform()->position + glm::vec2(x, -y) * getLOSDistance() * 0.75f);
 
-	//x = sin((getCurrentHeading() + m_whiskerAngle + 135) * Util::Deg2Rad);
-	//y = cos((getCurrentHeading() + m_whiskerAngle + 135) * Util::Deg2Rad);
-	//setRightSideLOSEndPoint(getTransform()->position + glm::vec2(x, -y) * getLOSDistance() * 0.75f);
+	x = sin((getCurrentHeading() + m_whiskerAngle + 135) * Util::Deg2Rad);
+	y = cos((getCurrentHeading() + m_whiskerAngle + 135) * Util::Deg2Rad);
+	setRightSideLOSEndPoint(getTransform()->position + glm::vec2(x, -y) * getLOSDistance() * 0.75f);
 
 }
 
