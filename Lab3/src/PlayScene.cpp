@@ -81,6 +81,15 @@ void PlayScene::start()
 	m_guiTitle = "Play Scene";
 	m_bDebugView = false;
 
+	// Added the audio load lines 
+	SoundManager::Instance().load("../Assets/audio/mainBGM.mp3", "mainBGM", SOUND_MUSIC);
+	//SoundManager::Instance().playMusic("mainBGM", -1, 0);
+
+	SoundManager::Instance().load("../Assets/audio/buff.wav", "buff", SOUND_SFX);
+	//SoundManager::Instance().playSound("buff", 0, -1);
+	SoundManager::Instance().load("../Assets/audio/engine.ogg", "engine", SOUND_SFX);
+	//SoundManager::Instance().playSound("engine", 0, -1);
+
 	m_pTarget = new Target(); // instantiating a new Target object - allocating memory on the Heap
 	addChild(m_pTarget);
 
