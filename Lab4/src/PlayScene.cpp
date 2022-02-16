@@ -89,6 +89,8 @@ void PlayScene::start()
 
 void PlayScene::GUI_Function()
 {
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+
 	// Always open with a NewFrame
 	ImGui::NewFrame();
 
@@ -99,16 +101,42 @@ void PlayScene::GUI_Function()
 
 	ImGui::Separator();
 
-	static bool toggleDebug = false;
-	if (ImGui::Checkbox("Toggle Grid", &toggleDebug))
+	static bool toggleGrid = false;
+	if (ImGui::Checkbox("Toggle Grid", &toggleGrid))
 	{
-
+		m_isGridEnabled = toggleGrid;
+		m_setGridEnabled(m_isGridEnabled);
 	}
 
 	ImGui::Separator();
 
 	// Grid Position properties
+	static int start_position[2] = { m_pSpaceShip->getGridPosition().x, m_pSpaceShip->getGridPosition().y };
 
+	if (ImGui::SliderInt2("Start Position", start_position, 0, Config::COL_NUM - 1))
+	{
+		if (start_position[1] > Config::ROW_NUM - 1)
+		{
+			start_position[1] = Config::ROW_NUM - 1;
+		}
+
+		m_pSpaceShip->getTransform()->position = m_getTile(start_position[0], start_position[1])->getTransform()->position + offset;
+		m_pSpaceShip->setGridPosition(start_position[0], start_position[1]);
+
+	}
+
+	static int goal_position[2] = { m_pTarget->getGridPosition().x, m_pTarget->getGridPosition().y };
+
+	if (ImGui::SliderInt2("Goal Position", goal_position, 0, Config::COL_NUM - 1))
+	{
+		if (goal_position[1] > Config::ROW_NUM - 1)
+		{
+			goal_position[1] = Config::ROW_NUM - 1;
+		}
+
+		m_pTarget->getTransform()->position = m_getTile(goal_position[0], goal_position[1])->getTransform()->position + offset;
+		m_pTarget->setGridPosition(goal_position[0], goal_position[1]);
+	}
 
 	ImGui::End();
 }
