@@ -8,7 +8,7 @@ class NavigationObject : public DisplayObject
 public:
 	// Constructor
 	NavigationObject();
-	
+
 	// Destructor
 	~NavigationObject();
 
@@ -25,4 +25,4 @@ private:
 	glm::vec2 m_gridPosition;
 };
 
-#endif /* defined (__NAVIGATION_OBJECT__) */
+#endif /* defined (__NAVIGATION_OBJECT__) */ 

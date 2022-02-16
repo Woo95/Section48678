@@ -12,4 +12,4 @@ enum TileStatus
 	START
 };
 
-#endif /* defined (__TILE_STATUS__) */
+#endif /* defined (__TILE_STATUS__) */ 
