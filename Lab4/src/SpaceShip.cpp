@@ -6,7 +6,7 @@
 
 SpaceShip::SpaceShip()
 {
-	TextureManager::Instance().load("../Assets/textures/ncl.png", "space_ship");
+	TextureManager::Instance().load("../Assets/textures/ncl_small.png", "space_ship");
 
 	const auto size = TextureManager::Instance().getTextureSize("space_ship");
 	setWidth(size.x);
