@@ -66,7 +66,10 @@ void PlayScene::start()
 {
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
-	m_bDebugView = false;
+
+	//Setup the grid
+	m_buildGrid();
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 
 	m_pTarget = new Target(); // instantiating a new Target object - allocating memory on the Heap
 	addChild(m_pTarget);
@@ -100,7 +103,7 @@ void PlayScene::GUI_Function()
 	static bool toggleDebug = false;
 	if (ImGui::Checkbox("Toggle Grid", &toggleDebug))
 	{
-		m_bDebugView = toggleDebug;
+
 	}
 
 	ImGui::Separator();
@@ -109,4 +112,54 @@ void PlayScene::GUI_Function()
 
 
 	ImGui::End();
+}
+
+void PlayScene::m_buildGrid()
+{
+	auto tileSize = Config::TILE_SIZE;
+
+	// add tiles to the grid
+
+	for (int row = 0; row < Config::ROW_NUM; ++row)
+	{
+		for (int col = 0; col < Config::COL_NUM; ++col)
+		{
+			Tile* tile = new Tile(); // create a new empty tile
+			tile->getTransform()->position = glm::vec2(col * tileSize, row * tileSize); // world position
+			tile->setGridPosition(col, row);
+			addChild(tile);
+			tile->addLabels();
+			tile->setEnabled(false);
+			m_pGrid.push_back(tile);
+		}
+	}
+}
+
+void PlayScene::m_setGridEnabled(bool state)
+{
+	m_isGridEnabled = state;
+
+	for (auto tile : m_pGrid)
+	{
+		tile->setEnabled(m_isGridEnabled); //game object
+		tile->setLabelsEnabled(m_isGridEnabled); //tile class
+	}
+}
+
+bool PlayScene::m_getGridEnabled() const
+{
+	return m_isGridEnabled;
+}
+
+Tile* PlayScene::m_getTile(int col, int row)
+{
+	return m_pGrid[(row * Config::COL_NUM) + col];
+}
+
+Tile* PlayScene::m_getTile(glm::vec2 grid_position)
+{
+	const auto col = grid_position.x;
+	const auto row = grid_position.y;
+
+	return m_pGrid[(row * Config::COL_NUM) + col];
 }

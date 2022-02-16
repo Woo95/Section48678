@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Target.h"
 #include "SpaceShip.h"
+#include "Tile.h"
 
 class PlayScene : public Scene
 {
@@ -29,10 +30,17 @@ private:
 	Target* m_pTarget;
 	SpaceShip* m_pSpaceShip;
 
-	// Debug bool
-	bool m_bDebugView;
+	// Pathfinding Objects and Functions
+	std::vector<Tile*> m_pGrid;
+	bool m_isGridEnabled;
 
-	void doWhiskerCollision();
+	void m_buildGrid();
+	void m_setGridEnabled(bool state);
+	bool m_getGridEnabled() const;
+
+	// convenience functions
+	Tile* m_getTile(int col, int row);
+	Tile* m_getTile(glm::vec2 grid_position);
 };
 
 #endif /* defined (__PLAY_SCENE__) */

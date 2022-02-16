@@ -42,6 +42,5 @@ private:
 	Tile* m_neighbours[NUM_OF_NEIGHBOUR_TILES];
 };
 
-#endif // !_TILE_
+#endif // !__TILE__
 
-#endif __TILE
