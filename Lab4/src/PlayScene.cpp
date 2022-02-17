@@ -70,19 +70,25 @@ void PlayScene::start()
 	//Setup the grid
 	m_buildGrid();
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+	m_currentHeuristic = MANHATTAN;
 
 	m_pTarget = new Target(); // instantiating a new Target object - allocating memory on the Heap
 	m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
 	m_pTarget->setGridPosition(15.0f, 11.0f);
+	m_getTile(15, 11)->setTileStatus(GOAL);
 	addChild(m_pTarget);
 
 	m_pSpaceShip = new SpaceShip();
 	m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
+	// position in world space matches grid space
 	m_pSpaceShip->setGridPosition(1.0f, 3.0f);
+	m_getTile(1, 3)->setTileStatus(START);
 	addChild(m_pSpaceShip);
 
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "boom", SOUND_SFX);
+
+	m_computeTileCosts();
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
@@ -160,6 +166,51 @@ void PlayScene::m_buildGrid()
 			m_pGrid.push_back(tile);
 		}
 	}
+	// create references (connections) for each tile to its neighbours (N, S, E, W)
+	for (int row = 0; row < Config::ROW_NUM; ++row)
+	{
+		for (int col = 0; col < Config::COL_NUM; ++col)
+		{
+			Tile* tile = m_getTile(col, row);
+
+			// If at topmost row
+			if (row == 0)
+			{
+				tile->setNeighbourTile(TOP_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(TOP_TILE, m_getTile(col, row - 1));
+			}
+			// If at rightmost col
+			if (col == Config::COL_NUM)
+			{
+				tile->setNeighbourTile(RIGHT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(TOP_TILE, m_getTile(col + 1, row));
+			}
+			// If at bottomost row
+			if (col == Config::ROW_NUM -1)
+			{
+				tile->setNeighbourTile(BOTTOM_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(BOTTOM_TILE, m_getTile(col, row+1));
+			}
+			// If at leftmost row
+			if (col == 0)
+			{
+				tile->setNeighbourTile(LEFT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(LEFT_TILE, m_getTile(col -1, row));
+			}
+		}
+	}
 }
 
 void PlayScene::m_setGridEnabled(bool state)
@@ -180,6 +231,26 @@ bool PlayScene::m_getGridEnabled() const
 
 void PlayScene::m_computeTileCosts()
 {
+	float distance = 0.0f; // Total distance
+
+	float dx = 0.0f;
+	float dy = 0.0f;
+
+	for (auto tile : m_pGrid)
+	{
+		dx = m_pTarget->getGridPosition().x - tile->getGridPosition().x; // x2 - x1
+		dy = m_pTarget->getGridPosition().y - tile->getGridPosition().y; // y2 - y1
+		switch (m_currentHeuristic)
+		{
+		case MANHATTAN:
+			distance = abs(dx) + abs(dy);
+			break;
+		case EUCLIDEAN:
+			distance = sqrt(dx * dx + dy * dy); // C^2 = A^2 + B^2
+			break;
+		}
+		tile->setTileCost(distance);
+	}
 }
 
 Tile* PlayScene::m_getTile(int col, int row)
