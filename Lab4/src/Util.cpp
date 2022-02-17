@@ -400,16 +400,9 @@ void Util::DrawFilledRect(const glm::vec2 position, const int width, const int h
 	rectangle.y = position.y;
 	rectangle.w = width;
 	rectangle.h = height;
-
-	/* Declaring the surface. */
-	SDL_Surface* surface;
-
-	/* Creating the surface. */
-	surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
 		
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
-	SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format, r, g, b));
-	SDL_RenderDrawRect(renderer, &rectangle);
+	SDL_RenderFillRect(renderer, &rectangle);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 

@@ -14,7 +14,18 @@ Tile::~Tile() {}
 
 void Tile::draw()
 {
-	Util::DrawRect(getTransform()->position, getWidth(), getHeight());
+	if (m_status == START)
+	{
+		Util::DrawFilledRect(getTransform()->position, getWidth(), getHeight(), glm::vec4(0.5f, 1.0f, 0.5f, 1.0f));
+	}
+	else if (m_status == GOAL)
+	{
+		Util::DrawFilledRect(getTransform()->position, getWidth(), getHeight(), glm::vec4(1.0f, 0.5f, 0.5f, 1.0f));
+	}
+	else
+	{
+		Util::DrawRect(getTransform()->position, getWidth(), getHeight());
+	}
 }
 
 void Tile::update() {}
