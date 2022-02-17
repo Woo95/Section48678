@@ -178,6 +178,10 @@ bool PlayScene::m_getGridEnabled() const
 	return m_isGridEnabled;
 }
 
+void PlayScene::m_computeTileCosts()
+{
+}
+
 Tile* PlayScene::m_getTile(int col, int row)
 {
 	return m_pGrid[(row * Config::COL_NUM) + col];
