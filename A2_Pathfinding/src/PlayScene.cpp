@@ -69,6 +69,10 @@ void PlayScene::start()
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
+	// Set SFX and Music
+	SoundManager::Instance().load("../Assets/audio/mainBGM.mp3", "main", SOUND_MUSIC);
+	SoundManager::Instance().playMusic("main", -1, 0);
+	SoundManager::Instance().setMusicVolume(5);
 
 	m_buildGrid();
 
