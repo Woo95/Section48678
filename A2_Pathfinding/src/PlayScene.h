@@ -3,7 +3,7 @@
 #define __PLAY_SCENE__
 
 #include "Scene.h"
-#include "Plane.h"
+#include "SpaceShip.h"
 #include "Button.h"
 #include "Label.h"
 
@@ -26,7 +26,7 @@ private:
 	
 	glm::vec2 m_mousePosition;
 
-	Plane* m_pPlaneSprite;
+	SpaceShip* m_spaceShip;
 	bool m_playerFacingRight;
 
 	// UI Items

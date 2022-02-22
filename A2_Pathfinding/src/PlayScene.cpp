@@ -54,8 +54,8 @@ void PlayScene::start()
 	m_guiTitle = "Play Scene";
 	
 	// Plane Sprite
-	m_pPlaneSprite = new Plane();
-	addChild(m_pPlaneSprite);
+	m_spaceShip = new SpaceShip();
+	addChild(m_spaceShip);
 
 	/* Instructions Label */
 	m_pInstructionsLabel = new Label("Press R to restart", "Consolas");
@@ -82,7 +82,7 @@ void PlayScene::GUI_Function() const
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
 	//ImGui::ShowDemoWindow();
 	
-	ImGui::Begin("Your Window Title Goes Here", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Debug Menu", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
 
 	if(ImGui::Button("My Button"))
 	{
@@ -91,13 +91,10 @@ void PlayScene::GUI_Function() const
 
 	ImGui::Separator();
 
-	static float float3[3] = { 0.0f, 1.0f, 1.5f };
-	if(ImGui::SliderFloat3("My Slider", float3, 0.0f, 2.0f))
+	static float start_position[2] = { m_spaceShip->getTransform()->position.x, m_spaceShip->getTransform()->position.y };
+	if(ImGui::SliderFloat2("Start Position", start_position, 0.0f, 500.0f))
 	{
-		std::cout << float3[0] << std::endl;
-		std::cout << float3[1] << std::endl;
-		std::cout << float3[2] << std::endl;
-		std::cout << "---------------------------\n";
+		m_spaceShip->getTransform()->position = glm::vec2(start_position[0], start_position[1]);
 	}
 	
 	ImGui::End();
