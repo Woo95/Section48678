@@ -38,14 +38,29 @@ void PlayScene::handleEvents()
 	EventManager::Instance().update();
 
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_ESCAPE))
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_ESCAPE))
 	{
 		TheGame::Instance().quit();
 	}
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_R))
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_R))
 	{
 		TheGame::Instance().changeSceneState(START_SCENE);
+	}
+
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_H))
+	{
+		if (!m_isGridEnabled)
+		{
+			m_isGridEnabled = true;
+			m_setGridEnabled(m_isGridEnabled);
+		}
+		
+		else 
+		{
+			m_isGridEnabled = false;
+			m_setGridEnabled(m_isGridEnabled);
+		}
 	}
 }
 
@@ -82,9 +97,13 @@ void PlayScene::start()
 	m_pInstructionsLabel2 = new Label("Press M to move along shortest route", "Consolas");
 	m_pInstructionsLabel2->getTransform()->position = glm::vec2(200.0f, 60.0f);
 
+	m_pInstructionsLabel3 = new Label("Press H to toggle debug view", "Consolas");
+	m_pInstructionsLabel3->getTransform()->position = glm::vec2(156.0f, 85.0f);
+
 	addChild(m_pInstructionsLabel);
 	addChild(m_pInstructionsLabel1);
 	addChild(m_pInstructionsLabel2);
+	addChild(m_pInstructionsLabel3);
 
 	m_computeTileCost();
 
@@ -240,7 +259,6 @@ void PlayScene::GUI_Function()
 	// grid properties
 
 	static bool toggleGrid = false;
-
 	if (ImGui::Checkbox("Toggle Grid", &toggleGrid))
 	{
 		m_isGridEnabled = toggleGrid;

@@ -35,7 +35,7 @@ private:
 
 	// pathfinding objects and function
 	std::vector<Tile*> m_pGrid;
-	bool m_isGridEnabled;
+	bool m_isGridEnabled = false;
 
 	void m_buildGrid();
 	bool m_getGridEnabled() const;
@@ -53,6 +53,7 @@ private:
 	Label* m_pInstructionsLabel;
 	Label* m_pInstructionsLabel1;
 	Label* m_pInstructionsLabel2;
+	Label* m_pInstructionsLabel3;
 };
 
 #endif /* defined (__PLAY_SCENE__) */
