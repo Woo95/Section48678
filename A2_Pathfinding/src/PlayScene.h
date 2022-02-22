@@ -3,6 +3,7 @@
 #define __PLAY_SCENE__
 
 #include "Scene.h"
+#include "Target.h"
 #include "SpaceShip.h"
 #include "Button.h"
 #include "Label.h"
@@ -25,6 +26,8 @@ private:
 	std::string m_guiTitle;
 	
 	glm::vec2 m_mousePosition;
+
+	Target* m_target;
 
 	SpaceShip* m_spaceShip;
 	bool m_playerFacingRight;

@@ -57,6 +57,10 @@ void PlayScene::start()
 	m_spaceShip = new SpaceShip();
 	addChild(m_spaceShip);
 
+	// Target Sprite
+	m_target = new Target();
+	addChild(m_target);
+
 	/* Instructions Label */
 	m_pInstructionsLabel = new Label("Press R to restart", "Consolas");
 	m_pInstructionsLabel->getTransform()->position = glm::vec2(103.0f, 10.0f);
@@ -95,6 +99,12 @@ void PlayScene::GUI_Function() const
 	if(ImGui::SliderFloat2("Start Position", start_position, 0.0f, 500.0f))
 	{
 		m_spaceShip->getTransform()->position = glm::vec2(start_position[0], start_position[1]);
+	}
+
+	static float goal_position[2] = { m_target->getTransform()->position.x, m_target->getTransform()->position.y };
+	if (ImGui::SliderFloat2("Goal Position", goal_position, 0.0f, 500.0f))
+	{
+		m_target->getTransform()->position = glm::vec2(goal_position[0], goal_position[1]);
 	}
 	
 	ImGui::End();
