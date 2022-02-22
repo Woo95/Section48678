@@ -7,6 +7,8 @@
 #include "SpaceShip.h"
 #include "Button.h"
 #include "Label.h"
+#include "Tile.h"
+#include "Heuristic.h"
 
 class PlayScene : public Scene
 {
@@ -31,6 +33,22 @@ private:
 
 	SpaceShip* m_spaceShip;
 	bool m_playerFacingRight;
+
+	// pathfinding objects and function
+	std::vector<Tile*> m_pGrid;
+	bool m_isGridEnabled;
+
+	void m_buildGrid();
+	bool m_getGridEnabled() const;
+	void m_setGridEnabled(bool state);
+	void m_computeTileCost();
+
+	// convert world to grid
+	Tile* m_getTile(int col, int row);
+	Tile* m_getTile(glm::vec2 grid_position);
+
+	// Heuristic tracking
+	Heuristic m_currentHeuristic;
 
 	// UI Items
 	Label* m_pInstructionsLabel;

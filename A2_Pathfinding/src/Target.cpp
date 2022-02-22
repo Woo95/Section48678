@@ -41,7 +41,7 @@ void Target::clean()
 
 void Target::m_move()
 {
-	getTransform()->position = getTransform()->position + getRigidBody()->velocity * 5.0f;
+
 }
 
 void Target::m_checkBounds()
