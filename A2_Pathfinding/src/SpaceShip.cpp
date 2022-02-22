@@ -12,7 +12,7 @@ SpaceShip::SpaceShip()
 	setWidth(size.x);
 	setHeight(size.y);
 	getTransform()->position = glm::vec2(100.0f, 400.0f);
-	//getRigidBody()->bounds = glm::vec2(getWidth(), getHeight());
+	getRigidBody()->bounds = glm::vec2(getWidth(), getHeight());
 	getRigidBody()->velocity = glm::vec2(0, 0);
 	getRigidBody()->acceleration = glm::vec2(0, 0);
 	getRigidBody()->isColliding = false;
@@ -37,7 +37,7 @@ void SpaceShip::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the target
-	TextureManager::Instance().draw("space_ship", x, y, getCurrentHeading(), 255);
+	TextureManager::Instance().draw("space_ship", x, y, getCurrentHeading(), 255, isCentered());
 }
 
 void SpaceShip::update()

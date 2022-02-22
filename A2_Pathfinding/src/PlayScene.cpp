@@ -167,6 +167,7 @@ bool PlayScene::m_getGridEnabled() const
 {
 	return m_isGridEnabled;
 }
+
 void PlayScene::m_setGridEnabled(const bool state)
 {
 	m_isGridEnabled = state;
@@ -222,7 +223,7 @@ Tile* PlayScene::m_getTile(glm::vec2 grid_position)
 	return m_getTile(col, row);
 }
 
-void PlayScene::GUI_Function() const
+void PlayScene::GUI_Function()
 {
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 
@@ -239,6 +240,7 @@ void PlayScene::GUI_Function() const
 	// grid properties
 
 	static bool toggleGrid = false;
+
 	if (ImGui::Checkbox("Toggle Grid", &toggleGrid))
 	{
 		m_isGridEnabled = toggleGrid;
@@ -262,8 +264,6 @@ void PlayScene::GUI_Function() const
 		m_currentHeuristic = static_cast<Heuristic>(radio);
 		m_computeTileCost();
 	}
-
-	ImGui::Separator();
 
 	ImGui::Separator();
 
