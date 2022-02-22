@@ -51,8 +51,14 @@ void StartScene::start()
 	addChild(m_pStartLabel);
 
 	m_pInstructionsLabel = new Label("Press 1 to Play", "Consolas", 40, blue, glm::vec2(400.0f, 120.0f));
+	m_pInstructionsLabelName1 = new Label("Chaewan Woo - #101354291", "Consolas", 25, blue, glm::vec2(400.0f, 200.0f));
+	m_pInstructionsLabelName2 = new Label("Travor Bui  - #101376655", "Consolas", 25, blue, glm::vec2(400.0f, 220.0f));
 	m_pInstructionsLabel->setParent(this);
+	m_pInstructionsLabelName1->setParent(this);
+	m_pInstructionsLabelName2->setParent(this);
 	addChild(m_pInstructionsLabel);
+	addChild(m_pInstructionsLabelName1);
+	addChild(m_pInstructionsLabelName2);
 
 
 	m_pShip = new Ship();

@@ -34,7 +34,7 @@ bool Game::init(const char* title, const int x, const int y, const int width, co
 	{
 		flags = SDL_WINDOW_FULLSCREEN;
 	}
-
+		
 	// initialize SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
 	{
