@@ -8,6 +8,7 @@
 #include "Label.h"
 #include "Tile.h"
 #include "Heuristic.h"
+#include "Obstacle.h"
 
 class PlayScene : public Scene
 {
@@ -28,6 +29,8 @@ private:
 	
 	glm::vec2 m_mousePosition;
 
+	Obstacle* m_obstacle;
+
 	Target* m_target;
 
 	SpaceShip* m_spaceShip;
@@ -41,6 +44,7 @@ private:
 	bool m_getGridEnabled() const;
 	void m_setGridEnabled(bool state);
 	void m_computeTileCost();
+	void m_createObstacle(int, int, glm::vec2);
 
 	// convert world to grid
 	Tile* m_getTile(int col, int row);

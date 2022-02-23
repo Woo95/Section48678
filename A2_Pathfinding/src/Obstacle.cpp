@@ -6,7 +6,7 @@
 
 Obstacle::Obstacle()
 {
-	TextureManager::Instance().load("../Assets/textures/obstacle.png", "obstacle");
+	TextureManager::Instance().load("../Assets/textures/mine.png", "obstacle");
 
 	auto size = TextureManager::Instance().getTextureSize("obstacle");
 	setWidth(size.x);
