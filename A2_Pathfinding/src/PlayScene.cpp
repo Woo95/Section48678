@@ -62,6 +62,28 @@ void PlayScene::handleEvents()
 			m_setGridEnabled(m_isGridEnabled);
 		}
 	}
+
+	// To use the variables for the left and right click events 
+	auto x = EventManager::Instance().getMousePosition().x / 40;
+	auto y = EventManager::Instance().getMousePosition().y / 40;
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+
+	// pressing left click while grid is enabled let you move the spaceship around the grid.
+	if (m_isGridEnabled == true && EventManager::Instance().getMouseButton(0) && m_target->getTransform()->position != m_getTile(x, y)->getTransform()->position + offset)
+	{
+		m_getTile(m_spaceShip->getGridPosition().x, m_spaceShip->getGridPosition().y)->setTileStatus(UNVISITED);
+		m_spaceShip->setGridPosition(x, y);
+		m_spaceShip->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
+		m_getTile(x, y)->setTileStatus(START);
+	}
+	// pressing right click while grid is enabled let you move the target around the grid.
+	if (m_isGridEnabled == true && EventManager::Instance().getMouseButton(2) && m_spaceShip->getTransform()->position != m_getTile(x, y)->getTransform()->position + offset)
+	{
+		m_getTile(m_target->getGridPosition().x, m_target->getGridPosition().y)->setTileStatus(UNVISITED);
+		m_target->setGridPosition(x, y);
+		m_target->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
+		m_getTile(x, y)->setTileStatus(GOAL);
+	}
 }
 
 void PlayScene::start()
@@ -169,7 +191,6 @@ void PlayScene::m_buildGrid()
 			else
 			{
 				tile->setNeighbourTile(BOTTOM_TILE, m_getTile(col, row + 1));
-
 			}
 
 			// left
@@ -181,7 +202,6 @@ void PlayScene::m_buildGrid()
 			{
 				tile->setNeighbourTile(LEFT_TILE, m_getTile(col - 1, row));
 			}
-
 		}
 	}
 }
