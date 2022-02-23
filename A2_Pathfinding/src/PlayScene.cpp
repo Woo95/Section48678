@@ -72,7 +72,7 @@ void PlayScene::handleEvents()
 		auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 		if (m_getTile(x, y)->getTileStatus() == UNVISITED)
 		{
-			m_getTile(m_spaceShip->getGridPosition().x, m_spaceShip->getGridPosition().y)->setTileStatus(UNVISITED);
+			m_getTile(m_spaceShip->getGridPosition())->setTileStatus(UNVISITED);
 			m_spaceShip->setGridPosition(x, y);
 			m_spaceShip->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
 			m_getTile(x, y)->setTileStatus(START);
@@ -87,7 +87,7 @@ void PlayScene::handleEvents()
 		auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 		if (m_getTile(x, y)->getTileStatus() == UNVISITED)
 		{
-			m_getTile(m_target->getGridPosition().x, m_target->getGridPosition().y)->setTileStatus(UNVISITED);
+			m_getTile(m_target->getGridPosition())->setTileStatus(UNVISITED);
 			m_target->setGridPosition(x, y);
 			m_target->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
 			m_getTile(x, y)->setTileStatus(GOAL);
@@ -127,7 +127,6 @@ void PlayScene::start()
 	m_createObstacle(7, 5, offset);
 	m_createObstacle(7, 7, offset);
 	m_createObstacle(8, 9, offset);
-	m_createObstacle(9, 6, offset);
 	m_createObstacle(9, 9, offset);
 	m_createObstacle(10, 7, offset);
 	m_createObstacle(10, 4, offset);
