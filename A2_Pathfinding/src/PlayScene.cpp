@@ -121,19 +121,12 @@ void PlayScene::handleEvents()
 		if (!m_isGridEnabled && m_playMoveSound)
 		{
 			SoundManager::Instance().playSound("marchsound", -1, 0);
-
-
 		}
 
-		if (m_pSpaceShip->getGridPosition() == m_pTarget->getGridPosition())
-		{
-			SoundManager::Instance().playSound("goalsound", 1, 0);
-		}
-		//if (m_pTarget->getGridPosition() == m_pSpaceShip->getGridPosition())
+		//if (m_pSpaceShip->getGridPosition() == m_pTarget->getGridPosition())
 		//{
-		//	SoundManager::Instance().playSound("goalsound", 0, 0);
+		//	SoundManager::Instance().playSound("goalsound", -1, 0);
 		//}
-
 	}
 }
 
@@ -532,6 +525,12 @@ void PlayScene::m_moveShip()
 	}
 	else
 	{
+		if (!m_isGridEnabled && m_playMoveSound)
+		{
+			SoundManager::Instance().playSound("goalsound", 0, 0);
+			m_playMoveSound = !m_playMoveSound;
+		}
+
 		m_shipIsMoving = false;
 	}
 }
