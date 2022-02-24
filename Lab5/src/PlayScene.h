@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "Target.h"
 #include "SpaceShip.h"
+#include "Obstacle.h"
 #include "Tile.h"
 
 class PlayScene : public Scene
@@ -33,6 +34,7 @@ private:
 	// Game Objects
 	Target* m_pTarget;
 	SpaceShip* m_pSpaceShip;
+	Obstacle* m_obstacle;
 
 	// Pathfinding Objects and Functions
 	std::vector<Tile*> m_pGrid;
@@ -40,6 +42,7 @@ private:
 	void m_setGridEnabled(bool state);
 	bool m_getGridEnabled() const;
 	void m_computeTileCosts();
+	void m_createObstacle(int, int, glm::vec2);
 
 	void m_findShortestPath(); // Our big algorithm
 	void m_displayPathList(); // In console
