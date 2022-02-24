@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "EventManager.h"
 
+
 // required for IMGUI
 #include "imgui.h"
 #include "imgui_sdl.h"
@@ -553,10 +554,19 @@ void PlayScene::GUI_Function()
 
 	ImGui::Separator();
 
-	if (ImGui::Button("Reset"))
+	if (ImGui::Button("Reset Play Scene"))
 	{
 		m_resetPathfinding();
 		m_setGridEnabled(false);
+	}
+
+	ImGui::Separator();
+	ImGui::Text("Total Cost");
+	if (m_pPathList.size() > 0)
+	{
+		char array[10];
+		sprintf(array, "%.1f", m_pPathList[0]->getTileCost());
+		ImGui::Text(array);
 	}
 
 	ImGui::Separator();

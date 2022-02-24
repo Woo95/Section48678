@@ -338,7 +338,7 @@ void PlayScene::m_findShortestPath()
 					break; // Stop the search!
 				}
 			}
-			// Remove the reference of the current tile in the open list
+			// Remov the reference of the current tile in the open list
 			m_pPathList.push_back(m_pOpenList[0]);
 			m_pOpenList.pop_back();
 			// Add the minTile to the openList
