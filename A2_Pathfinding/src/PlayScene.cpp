@@ -176,7 +176,7 @@ void PlayScene::m_buildGrid()
 		}
 	}
 
-	// setup neightbour refernece 
+	// setup neighbour refernece 
 	// Tiles = nodes in our graph
 	for (int row = 0; row < Config::ROW_NUM; ++row)
 	{
@@ -222,6 +222,46 @@ void PlayScene::m_buildGrid()
 			else
 			{
 				tile->setNeighbourTile(LEFT_TILE, m_getTile(col - 1, row));
+			}
+			
+			// top right
+			if (row = 0 || col == Config::COL_NUM - 1)
+			{
+				tile->setNeighbourTile(TOP_RIGHT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(TOP_RIGHT_TILE, m_getTile(col + 1, row - 1));
+			}
+
+			// top left
+			if (row = 0 || col == 0)
+			{
+				tile->setNeighbourTile(TOP_LEFT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(TOP_LEFT_TILE, m_getTile(col - 1, row - 1));
+			}
+
+			// bottom right
+			if (row == Config::ROW_NUM - 1 || col == Config::COL_NUM - 1)
+			{
+				tile->setNeighbourTile(BOTTOM_RIGHT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(BOTTOM_RIGHT_TILE, m_getTile(col + 1, row + 1));
+			}
+
+			// bottom left
+			if (row == Config::ROW_NUM - 1 || col == 0)
+			{
+				tile->setNeighbourTile(BOTTOM_LEFT_TILE, nullptr);
+			}
+			else
+			{
+				tile->setNeighbourTile(BOTTOM_LEFT_TILE, m_getTile(col - 1, row + 1));
 			}
 		}
 	}
