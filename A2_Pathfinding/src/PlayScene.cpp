@@ -211,20 +211,21 @@ void PlayScene::m_computeTileCost()
 	// for each tile in the grid, loop
 	for (auto tile : m_pGrid)
 	{
+		dx = m_target->getGridPosition().x - tile->getGridPosition().x; // x2 - x1
+		dy = m_target->getGridPosition().y - tile->getGridPosition().y; // y2 - y1;
 		// compute the distance from each tile to the goal tile
 		// distance (f) = tile cost (g) + heuristic estimate (h)
 		switch (m_currentHeuristic)
 		{
 		case MANHATTAN:
-			dx = abs(tile->getGridPosition().x - m_target->getGridPosition().x);
-			dy = abs(tile->getGridPosition().y - m_target->getGridPosition().y);
 
-			distance = dx + dy;
+
+			distance = abs(dx) + abs(dy);
 			break;
 		case EUCLIDEAN:
 
 			// computes euclidean distance ("as the crow flies") for each tile 
-			distance + Util::distance(tile->getGridPosition(), m_target->getGridPosition());
+			distance = sqrt(dx * dx + dy * dy); // C^2 = A^2 + B^2
 			break;
 		}
 
@@ -273,15 +274,15 @@ void PlayScene::GUI_Function()
 
 	// heuristic selection
 
-	static int radio = m_currentHeuristic;
+	static int radio = static_cast<int>(m_currentHeuristic);
 
 	ImGui::Text("Heuristic Type");
-	ImGui::RadioButton("Manhatten", &radio, MANHATTAN);
+	ImGui::RadioButton("Manhatten", &radio, static_cast<int>(MANHATTAN));
 	ImGui::SameLine();
-	ImGui::RadioButton("Euclidean", &radio, EUCLIDEAN);
+	ImGui::RadioButton("Euclidean", &radio, static_cast<int>(EUCLIDEAN));
 
 	// check if current heuristic is not the same as current selection
-	if (m_currentHeuristic != radio)
+	if (m_currentHeuristic != static_cast<Heuristic>(radio))
 	{
 		m_currentHeuristic = static_cast<Heuristic>(radio);
 		m_computeTileCost();
