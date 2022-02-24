@@ -31,20 +31,32 @@ private:
 
 	Obstacle* m_obstacle;
 
-	Target* m_target;
+	Target* m_pTarget;
 
-	SpaceShip* m_spaceShip;
+	SpaceShip* m_pSpaceShip;
 	bool m_playerFacingRight;
 
 	// pathfinding objects and function
 	std::vector<Tile*> m_pGrid;
 	bool m_isGridEnabled = false;
 
+	static int start_position[2];
+	static int goal_position[2];
+
 	void m_buildGrid();
 	bool m_getGridEnabled() const;
 	void m_setGridEnabled(bool state);
 	void m_computeTileCost();
 	void m_createObstacle(int, int, glm::vec2);
+
+	void m_findShortestPath(); // Our big algorithm
+	void m_displayPathList(); // In console
+	void m_resetPathfinding();
+
+	// Tile lists for pathfinding
+	std::vector<Tile*> m_pOpenList;
+	std::vector<Tile*> m_pClosedList;
+	std::vector<Tile*> m_pPathList;
 
 	// convert world to grid
 	Tile* m_getTile(int col, int row);
@@ -58,6 +70,11 @@ private:
 	Label* m_pInstructionsLabel1;
 	Label* m_pInstructionsLabel2;
 	Label* m_pInstructionsLabel3;
+
+	// Ship movement
+	int m_moveCounter = 0;
+	bool m_shipIsMoving = false;
+	void m_moveShip();
 };
 
 #endif /* defined (__PLAY_SCENE__) */

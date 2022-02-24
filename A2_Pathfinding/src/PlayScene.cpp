@@ -72,9 +72,9 @@ void PlayScene::handleEvents()
 		auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 		if (m_getTile(x, y)->getTileStatus() == UNVISITED)
 		{
-			m_getTile(m_spaceShip->getGridPosition())->setTileStatus(UNVISITED);
-			m_spaceShip->setGridPosition(x, y);
-			m_spaceShip->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
+			m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(UNVISITED);
+			m_pSpaceShip->setGridPosition(x, y);
+			m_pSpaceShip->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
 			m_getTile(x, y)->setTileStatus(START);
 		}
 	}
@@ -87,9 +87,9 @@ void PlayScene::handleEvents()
 		auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 		if (m_getTile(x, y)->getTileStatus() == UNVISITED)
 		{
-			m_getTile(m_target->getGridPosition())->setTileStatus(UNVISITED);
-			m_target->setGridPosition(x, y);
-			m_target->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
+			m_getTile(m_pTarget->getGridPosition())->setTileStatus(UNVISITED);
+			m_pTarget->setGridPosition(x, y);
+			m_pTarget->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
 			m_getTile(x, y)->setTileStatus(GOAL);
 		}
 	}
@@ -110,17 +110,17 @@ void PlayScene::start()
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	m_currentHeuristic = MANHATTAN;
 	
-	m_target = new Target(); // instantiating a new Target object - allocating memory on the Heap
-	m_target->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
-	m_target->setGridPosition(15, 11);
+	m_pTarget = new Target(); // instantiating a new Target object - allocating memory on the Heap
+	m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
+	m_pTarget->setGridPosition(15, 11);
 	m_getTile(15, 11)->setTileStatus(GOAL);
-	addChild(m_target);
+	addChild(m_pTarget);
 
-	m_spaceShip = new SpaceShip();
-	m_spaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
-	m_spaceShip->setGridPosition(1, 3);
+	m_pSpaceShip = new SpaceShip();
+	m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
+	m_pSpaceShip->setGridPosition(1, 3);
 	m_getTile(1, 3)->setTileStatus(START);
-	addChild(m_spaceShip);
+	addChild(m_pSpaceShip);
 
 	// Create Obstacle
 	m_createObstacle(5, 5, offset);
@@ -275,6 +275,122 @@ void PlayScene::m_createObstacle(int x, int y, glm::vec2 offset)
 	addChild(m_obstacle);
 }
 
+void PlayScene::m_findShortestPath()
+{
+	// If there's no path, we're good to pathfind
+	if (m_pPathList.empty())
+	{
+		// Step 1 - Add start position to the open list
+		Tile* startTile = m_getTile(m_pSpaceShip->getGridPosition());
+		startTile->setTileStatus(OPEN);
+		m_pOpenList.push_back(startTile);
+
+		bool goalFound = false; // Flag for while loop
+
+		// Step 2 - Iterate until the open list is empty or the goal is found
+		while (!m_pOpenList.empty() && !goalFound)
+		{
+			float min = INFINITY; // INFINITY == Max tile cost
+			Tile* minTile;
+			int minTileIndex = 0;
+			int count = 0;
+
+			std::vector<Tile*> neighbourList;
+			for (int index = 0; index < NUM_OF_NEIGHBOUR_TILES; index++)
+			{
+				if (m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)) == nullptr)
+					continue;
+
+				neighbourList.push_back(m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)));
+			}
+
+			for (Tile* neighbour : neighbourList)
+			{
+				if (neighbour->getTileStatus() != GOAL)
+				{
+					if (neighbour->getTileCost() < min)
+					{
+						min = neighbour->getTileCost();
+						minTile = neighbour;
+						minTileIndex = count;
+					}
+					count++;
+				}
+				else // We have found the goal, yay!
+				{
+					minTile = neighbour;
+					m_pPathList.push_back(minTile);
+					goalFound = true;
+					break; // Stop the search!
+				}
+			}
+			// Remove the reference of the current tile in the open list
+			m_pPathList.push_back(m_pOpenList[0]);
+			m_pOpenList.pop_back();
+			// Add the minTile to the openList
+			m_pOpenList.push_back(minTile);
+			minTile->setTileStatus(OPEN);
+			neighbourList.erase(neighbourList.begin() + minTileIndex);
+			// Push all remaining neighbours onto the closed list
+			for (Tile* neighbour : neighbourList)
+			{
+				if (neighbour->getTileStatus() == UNVISITED)
+				{
+					neighbour->setTileStatus(CLOSED);
+					m_pClosedList.push_back(neighbour);
+				}
+			}
+		}
+		// Fixes the last two tiles being swapped
+		Tile* goal = m_pPathList.at(m_pPathList.size() - 2);
+		m_pPathList.erase(m_pPathList.end() - 2);
+		m_pPathList.push_back(goal);
+	}
+}
+
+void PlayScene::m_displayPathList()
+{
+	for (Tile* node : m_pPathList)
+	{
+		std::cout << "(" << node->getGridPosition().x << ", "
+			<< node->getGridPosition().y << ")" << std::endl;
+	}
+	std::cout << "Path Length: " << m_pPathList.size() << std::endl;
+}
+
+void PlayScene::m_resetPathfinding()
+{
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+
+	// Clear tile vectors
+	m_pPathList.clear();
+	m_pPathList.shrink_to_fit();
+	m_pOpenList.clear();
+	m_pOpenList.shrink_to_fit();
+	m_pClosedList.clear();
+	m_pClosedList.shrink_to_fit();
+
+	// Reset tile statuses
+	for (Tile* tile : m_pGrid)
+		tile->setTileStatus(UNVISITED);
+
+	// Reset target data
+	m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
+	m_pTarget->setGridPosition(15.0f, 11.0f);
+	m_getTile(15, 11)->setTileStatus(GOAL);
+	goal_position[0] = m_pTarget->getGridPosition().x;
+	goal_position[1] = m_pTarget->getGridPosition().y;
+
+	// Reset ship data
+	m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
+	m_pSpaceShip->setGridPosition(1.0f, 3.0f);
+	m_getTile(1, 3)->setTileStatus(START);
+	start_position[0] = m_pSpaceShip->getGridPosition().x;
+	start_position[1] = m_pSpaceShip->getGridPosition().y;
+	m_moveCounter = 0;
+	m_shipIsMoving = false;
+}
+
 bool PlayScene::m_getGridEnabled() const
 {
 	return m_isGridEnabled;
@@ -305,15 +421,15 @@ void PlayScene::m_computeTileCost()
 		switch (m_currentHeuristic)
 		{
 		case MANHATTAN:
-			dx = abs(tile->getGridPosition().x - m_target->getGridPosition().x);
-			dy = abs(tile->getGridPosition().y - m_target->getGridPosition().y);
+			dx = abs(tile->getGridPosition().x - m_pTarget->getGridPosition().x);
+			dy = abs(tile->getGridPosition().y - m_pTarget->getGridPosition().y);
 
 			distance = dx + dy;
 			break;
 		case EUCLIDEAN:
 
 			// computes euclidean distance ("as the crow flies") for each tile 
-			distance + Util::distance(tile->getGridPosition(), m_target->getGridPosition());
+			distance + Util::distance(tile->getGridPosition(), m_pTarget->getGridPosition());
 			break;
 		}
 
@@ -333,6 +449,10 @@ Tile* PlayScene::m_getTile(glm::vec2 grid_position)
 	const auto row = grid_position.y;
 
 	return m_getTile(col, row);
+}
+
+void PlayScene::m_moveShip()
+{
 }
 
 void PlayScene::GUI_Function()
@@ -381,7 +501,7 @@ void PlayScene::GUI_Function()
 	// spaceship properties
 
 
-	static int start_position[2] = { m_spaceShip->getGridPosition().x, m_spaceShip->getGridPosition().y };
+	static int start_position[2] = { m_pSpaceShip->getGridPosition().x, m_pSpaceShip->getGridPosition().y };
 	if (ImGui::SliderInt2("Start Position", start_position, 0, Config::COL_NUM - 1))
 	{
 		// constrain object within max row
@@ -390,15 +510,15 @@ void PlayScene::GUI_Function()
 			start_position[1] = Config::ROW_NUM - 1;
 		}
 
-		m_getTile(m_spaceShip->getGridPosition())->setTileStatus(UNVISITED);
-		m_spaceShip->getTransform()->position = m_getTile(start_position[0], start_position[1])->getTransform()->position + offset;
-		m_spaceShip->setGridPosition(start_position[0], start_position[1]);
-		m_getTile(m_spaceShip->getGridPosition())->setTileStatus(START);
+		m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(UNVISITED);
+		m_pSpaceShip->getTransform()->position = m_getTile(start_position[0], start_position[1])->getTransform()->position + offset;
+		m_pSpaceShip->setGridPosition(start_position[0], start_position[1]);
+		m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(START);
 	}
 
 	// target properties
 
-	static int goal_position[2] = { m_target->getGridPosition().x, m_target->getGridPosition().y };
+	static int goal_position[2] = { m_pTarget->getGridPosition().x, m_pTarget->getGridPosition().y };
 	if (ImGui::SliderInt2("Goal Position", goal_position, 0, Config::COL_NUM - 1))
 	{
 		// constrain object within max row
@@ -407,12 +527,15 @@ void PlayScene::GUI_Function()
 			goal_position[1] = Config::ROW_NUM - 1;
 		}
 
-		m_getTile(m_target->getGridPosition())->setTileStatus(UNVISITED);
-		m_target->getTransform()->position = m_getTile(goal_position[0], goal_position[1])->getTransform()->position + offset;
-		m_target->setGridPosition(goal_position[0], goal_position[1]);
-		m_getTile(m_target->getGridPosition())->setTileStatus(GOAL);
+		m_getTile(m_pTarget->getGridPosition())->setTileStatus(UNVISITED);
+		m_pTarget->getTransform()->position = m_getTile(goal_position[0], goal_position[1])->getTransform()->position + offset;
+		m_pTarget->setGridPosition(goal_position[0], goal_position[1]);
+		m_getTile(m_pTarget->getGridPosition())->setTileStatus(GOAL);
 		m_computeTileCost();
 	}
 	
 	ImGui::End();
 }
+
+int PlayScene::start_position[2];
+int PlayScene::goal_position[2];
