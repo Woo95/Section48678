@@ -29,14 +29,14 @@ public:
 	void setGUIFunction(const Callback& callback);
 	void setDefaultGUIFunction();
 	void clearWindow() const;
-	
+
 
 private:
 	ImGuiWindowFrame();
 	~ImGuiWindowFrame();
 
 	void m_defaultGUIFunction();
-	
+
 	std::shared_ptr<SDL_Window> m_pWindow;
 	std::shared_ptr<SDL_Renderer> m_pRenderer;
 

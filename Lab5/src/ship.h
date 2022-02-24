@@ -42,4 +42,3 @@ private:
 
 
 #endif /* defined (__SHIP__) */
-

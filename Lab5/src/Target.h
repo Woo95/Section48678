@@ -22,4 +22,4 @@ private:
 };
 
 
-#endif 
+#endif /* defined (__TARGET__) */

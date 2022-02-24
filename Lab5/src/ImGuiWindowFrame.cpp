@@ -60,11 +60,11 @@ void ImGuiWindowFrame::Render()
 	SDL_RenderPresent(getRenderer()); // draw to the screen
 }
 
-void ImGuiWindowFrame::setGUIFunction(const Callback& callback)
+void ImGuiWindowFrame::setGUIFunction(const Callback & callback)
 {
 	SDL_SetRenderDrawColor(getRenderer(), 255, 255, 255, 255);
 	SDL_RenderClear(getRenderer());
-	
+
 	m_callback = callback;
 }
 
@@ -99,7 +99,7 @@ void ImGuiWindowFrame::Start()
 	m_callback();
 
 	// Don't Remove this
-	
+
 	ImGui::Render();
 	SDL_SetRenderDrawColor(getRenderer(), 255, 255, 255, 255);
 	SDL_RenderClear(getRenderer());

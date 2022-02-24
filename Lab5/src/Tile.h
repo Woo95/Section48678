@@ -1,6 +1,6 @@
 #pragma once
-#ifndef __TILE__
-#define __TILE__
+#ifndef _TILE_
+#define _TILE_
 
 #include "Label.h"
 #include "NavigationObject.h"
@@ -42,5 +42,4 @@ private:
 	Tile* m_neighbours[NUM_OF_NEIGHBOUR_TILES];
 };
 
-#endif // !__TILE__
-
+#endif // !_TILE_

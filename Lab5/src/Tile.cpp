@@ -1,6 +1,6 @@
 #include "Tile.h"
 #include "Config.h"
-#include "util.h"
+#include "Util.h"
 #include <sstream>
 #include <iomanip>
 
@@ -10,22 +10,16 @@ Tile::Tile() : m_cost(0.0f)
 	setHeight(Config::TILE_SIZE);
 }
 
-Tile::~Tile() {}
+Tile::~Tile() = default;
 
 void Tile::draw()
 {
 	if (m_status == START)
-	{
 		Util::DrawFilledRect(getTransform()->position, getWidth(), getHeight(), glm::vec4(0.5f, 1.0f, 0.5f, 1.0f));
-	}
 	else if (m_status == GOAL)
-	{
 		Util::DrawFilledRect(getTransform()->position, getWidth(), getHeight(), glm::vec4(1.0f, 0.5f, 0.5f, 1.0f));
-	}
 	else
-	{
 		Util::DrawRect(getTransform()->position, getWidth(), getHeight());
-	}
 }
 
 void Tile::update() {}
@@ -37,14 +31,14 @@ Tile* Tile::getNeighbourTile(NeighbourTile position)
 	return m_neighbours[position];
 }
 
-void Tile::setNeighbourTile(NeighbourTile position, Tile* tile)
+void Tile::setNeighbourTile(NeighbourTile position, Tile * tile)
 {
 	m_neighbours[position] = tile;
 }
 
 float Tile::getTileCost() const
 {
-	return 0.0f;
+	return m_cost;
 }
 
 void Tile::setTileCost(float cost)
@@ -95,13 +89,13 @@ void Tile::addLabels()
 {
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 
-	//cost label
+	// cost label
 	m_costLabel = new Label("99.9", "Consolas", 12);
 	m_costLabel->getTransform()->position = getTransform()->position + offset + glm::vec2(0.0f, -6.0f);
 	getParent()->addChild(m_costLabel);
 	m_costLabel->setEnabled(false);
 
-	//status label
+	// status label
 	m_statusLabel = new Label("=", "Consolas", 12);
 	m_statusLabel->getTransform()->position = getTransform()->position + offset + glm::vec2(0.0f, 6.0f);
 	getParent()->addChild(m_statusLabel);

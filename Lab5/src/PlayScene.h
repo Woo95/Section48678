@@ -2,11 +2,11 @@
 #ifndef __PLAY_SCENE__
 #define __PLAY_SCENE__
 
+#include "Heuristic.h"
 #include "Scene.h"
 #include "Target.h"
 #include "SpaceShip.h"
 #include "Tile.h"
-#include "Heuristic.h"
 
 class PlayScene : public Scene
 {
@@ -28,6 +28,7 @@ private:
 	bool m_isGridEnabled;
 	static int start_position[2];
 	static int goal_position[2];
+
 
 	// Game Objects
 	Target* m_pTarget;

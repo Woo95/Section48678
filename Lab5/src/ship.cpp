@@ -131,4 +131,3 @@ void Ship::m_reset()
 	const auto yComponent = -getHeight();
 	getTransform()->position = glm::vec2(xComponent, yComponent);
 }
-

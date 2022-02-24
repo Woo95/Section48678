@@ -11,8 +11,7 @@ SpaceShip::SpaceShip()
 	const auto size = TextureManager::Instance().getTextureSize("space_ship");
 	setWidth(size.x);
 	setHeight(size.y);
-	getTransform()->position = glm::vec2(100.0f, 400.0f);
-	getRigidBody()->bounds = glm::vec2(getWidth(), getHeight());
+
 	getRigidBody()->velocity = glm::vec2(0, 0);
 	getRigidBody()->acceleration = glm::vec2(0, 0);
 	getRigidBody()->isColliding = false;
