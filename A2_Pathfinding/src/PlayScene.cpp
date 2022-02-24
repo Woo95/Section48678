@@ -458,18 +458,18 @@ void PlayScene::m_computeTileCost()
 	{
 		// compute the distance from each tile to the goal tile
 		// distance (f) = tile cost (g) + heuristic estimate (h)
+		dx = m_pTarget->getGridPosition().x - tile->getGridPosition().x; // x2 - x1
+		dy = m_pTarget->getGridPosition().y - tile->getGridPosition().y; // y2 - y1
+
 		switch (m_currentHeuristic)
 		{
 		case MANHATTAN:
-			dx = abs(tile->getGridPosition().x - m_pTarget->getGridPosition().x);
-			dy = abs(tile->getGridPosition().y - m_pTarget->getGridPosition().y);
-
-			distance = dx + dy;
+			distance = abs(dx) + abs(dy);
 			break;
 		case EUCLIDEAN:
 
 			// computes euclidean distance ("as the crow flies") for each tile 
-			distance + Util::distance(tile->getGridPosition(), m_pTarget->getGridPosition());
+			distance = sqrt(dx * dx + dy * dy); // C^2 = A^2 + B^2
 			break;
 		}
 
