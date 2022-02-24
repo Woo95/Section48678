@@ -26,6 +26,10 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList();
+	if (m_shipIsMoving)
+	{
+		m_moveShip();
+	}
 }
 
 void PlayScene::clean()
@@ -54,12 +58,14 @@ void PlayScene::handleEvents()
 		{
 			m_isGridEnabled = true;
 			m_setGridEnabled(m_isGridEnabled);
+			m_resetPathfinding();
 		}
 		
 		else 
 		{
 			m_isGridEnabled = false;
 			m_setGridEnabled(m_isGridEnabled);
+			m_resetPathfinding();
 		}
 	}
 
@@ -93,6 +99,23 @@ void PlayScene::handleEvents()
 			m_getTile(x, y)->setTileStatus(GOAL);
 		}
 	}
+
+	// Press F to reset and then find shortPath
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_F))
+	{
+		if (m_isGridEnabled == true)
+		{
+			m_resetPathfinding();
+			m_findShortestPath();
+			m_setGridEnabled(false);
+			m_displayPathList();
+		}
+	}
+	// Press M to move
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_M))
+	{
+		m_shipIsMoving = !m_shipIsMoving;
+	}
 }
 
 void PlayScene::start()
@@ -124,15 +147,15 @@ void PlayScene::start()
 
 	// Create Obstacle
 	m_createObstacle(5, 5, offset);
-	m_createObstacle(7, 5, offset);
-	m_createObstacle(7, 7, offset);
-	m_createObstacle(8, 9, offset);
-	m_createObstacle(9, 9, offset);
-	m_createObstacle(10, 7, offset);
-	m_createObstacle(10, 4, offset);
-	m_createObstacle(10, 5, offset);
-	m_createObstacle(10, 6, offset);
-	m_createObstacle(10, 8, offset);
+	//m_createObstacle(7, 5, offset);
+	//m_createObstacle(7, 7, offset);
+	//m_createObstacle(8, 9, offset);
+	//m_createObstacle(9, 9, offset);
+	//m_createObstacle(10, 7, offset);
+	//m_createObstacle(10, 4, offset);
+	//m_createObstacle(10, 5, offset);
+	//m_createObstacle(10, 6, offset);
+	//m_createObstacle(10, 8, offset);
 
 	/* Instructions Label */
 	m_pInstructionsLabel = new Label("Press R to restart", "Consolas");
@@ -352,10 +375,12 @@ void PlayScene::m_displayPathList()
 {
 	for (Tile* node : m_pPathList)
 	{
-		std::cout << "(" << node->getGridPosition().x << ", "
-			<< node->getGridPosition().y << ")" << std::endl;
+		node->setEnabled(true);
+		node->setLabelsEnabled(true);
+		/*std::cout << "(" << node->getGridPosition().x << ", "
+			<< node->getGridPosition().y << ")" << std::endl;*/
 	}
-	std::cout << "Path Length: " << m_pPathList.size() << std::endl;
+	//std::cout << "Path Length: " << m_pPathList.size() << std::endl;
 }
 
 void PlayScene::m_resetPathfinding()
@@ -372,21 +397,23 @@ void PlayScene::m_resetPathfinding()
 
 	// Reset tile statuses
 	for (Tile* tile : m_pGrid)
+	{
 		tile->setTileStatus(UNVISITED);
+	}
 
 	// Reset target data
-	m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
-	m_pTarget->setGridPosition(15.0f, 11.0f);
-	m_getTile(15, 11)->setTileStatus(GOAL);
-	goal_position[0] = m_pTarget->getGridPosition().x;
-	goal_position[1] = m_pTarget->getGridPosition().y;
-
+	//m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
+	//m_pTarget->setGridPosition(15.0f, 11.0f);
+	m_getTile(m_pTarget->getGridPosition())->setTileStatus(GOAL);
+	//goal_position[0] = m_pTarget->getGridPosition().x;
+	//goal_position[1] = m_pTarget->getGridPosition().y;
+	
 	// Reset ship data
-	m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
-	m_pSpaceShip->setGridPosition(1.0f, 3.0f);
-	m_getTile(1, 3)->setTileStatus(START);
-	start_position[0] = m_pSpaceShip->getGridPosition().x;
-	start_position[1] = m_pSpaceShip->getGridPosition().y;
+	//m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
+	//m_pSpaceShip->setGridPosition(1.0f, 3.0f);
+	m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(START);
+	//start_position[0] = m_pSpaceShip->getGridPosition().x;
+	//start_position[1] = m_pSpaceShip->getGridPosition().y;
 	m_moveCounter = 0;
 	m_shipIsMoving = false;
 }
@@ -453,6 +480,22 @@ Tile* PlayScene::m_getTile(glm::vec2 grid_position)
 
 void PlayScene::m_moveShip()
 {
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+
+	if (m_moveCounter < m_pPathList.size())
+	{
+		m_pSpaceShip->getTransform()->position = m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position + offset;
+		m_pSpaceShip->setGridPosition(m_pPathList[m_moveCounter]->getGridPosition().x, m_pPathList[m_moveCounter]->getGridPosition().y);
+
+		if (Game::Instance().getFrames() % 20 == 0)
+		{
+			m_moveCounter++;
+		}
+	}
+	else
+	{
+		m_shipIsMoving = false;
+	}
 }
 
 void PlayScene::GUI_Function()
@@ -498,10 +541,17 @@ void PlayScene::GUI_Function()
 
 	ImGui::Separator();
 
-	// spaceship properties
+	if (ImGui::Button("Reset"))
+	{
+		m_resetPathfinding();
+		m_setGridEnabled(false);
+	}
 
+	ImGui::Separator();
 
-	static int start_position[2] = { m_pSpaceShip->getGridPosition().x, m_pSpaceShip->getGridPosition().y };
+	// Grid position properties
+	start_position[0] = m_pSpaceShip->getGridPosition().x;
+	start_position[1] = m_pSpaceShip->getGridPosition().y;
 	if (ImGui::SliderInt2("Start Position", start_position, 0, Config::COL_NUM - 1))
 	{
 		// constrain object within max row
@@ -518,7 +568,8 @@ void PlayScene::GUI_Function()
 
 	// target properties
 
-	static int goal_position[2] = { m_pTarget->getGridPosition().x, m_pTarget->getGridPosition().y };
+	goal_position[0] = m_pTarget->getGridPosition().x;
+	goal_position[1] = m_pTarget->getGridPosition().y;
 	if (ImGui::SliderInt2("Goal Position", goal_position, 0, Config::COL_NUM - 1))
 	{
 		// constrain object within max row
