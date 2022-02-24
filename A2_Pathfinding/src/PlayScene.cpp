@@ -225,7 +225,7 @@ void PlayScene::m_buildGrid()
 			}
 			
 			// top right
-			if (row = 0 || col == Config::COL_NUM - 1)
+			if (row == 0 || col == Config::COL_NUM - 1)
 			{
 				tile->setNeighbourTile(TOP_RIGHT_TILE, nullptr);
 			}
@@ -235,7 +235,7 @@ void PlayScene::m_buildGrid()
 			}
 
 			// top left
-			if (row = 0 || col == 0)
+			if (row == 0 || col == 0)
 			{
 				tile->setNeighbourTile(TOP_LEFT_TILE, nullptr);
 			}
