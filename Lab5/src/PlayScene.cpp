@@ -28,7 +28,10 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList(); //comment for now
-
+	if (m_shipIsMoving)
+	{
+		m_moveShip();
+	}
 	//if(m_pSpaceShip->isEnabled())
 	//{
 	//	
@@ -129,10 +132,29 @@ void PlayScene::GUI_Function()
 	}
 
 	ImGui::Separator();
+	if (ImGui::Button("Find Shortest Path"))
+	{
+		m_findShortestPath();
+	}
+
+	ImGui::Separator();
+	if (ImGui::Button("Start"))
+	{
+		if (!m_shipIsMoving)
+		{
+			m_shipIsMoving = true;
+		}
+	}
+
+	ImGui::Separator();
+	if (ImGui::Button("Reset"))
+	{
+		m_resetPathfinding();
+	}
 
 	// Grid Position properties
-	static int start_position[2] = { m_pSpaceShip->getGridPosition().x, m_pSpaceShip->getGridPosition().y };
-
+	start_position[0] = m_pSpaceShip->getGridPosition().x;
+	start_position[1] = m_pSpaceShip->getGridPosition().y;
 	if (ImGui::SliderInt2("Start Position", start_position, 0, Config::COL_NUM - 1))
 	{
 		if (start_position[1] > Config::ROW_NUM - 1)
@@ -147,8 +169,8 @@ void PlayScene::GUI_Function()
 
 	}
 
-	static int goal_position[2] = { m_pTarget->getGridPosition().x, m_pTarget->getGridPosition().y };
-
+	goal_position[0] = m_pTarget->getGridPosition().x;
+	goal_position[1] = m_pTarget->getGridPosition().y;
 	if (ImGui::SliderInt2("Goal Position", goal_position, 0, Config::COL_NUM - 1))
 	{
 		if (goal_position[1] > Config::ROW_NUM - 1)
@@ -274,6 +296,71 @@ void PlayScene::m_computeTileCosts()
 
 void PlayScene::m_findShortestPath()
 {
+	// If there's no path, we're good to pathfind
+	if (m_pPathList.empty())
+	{
+		// Step 1 - Add start position to the open list
+		Tile* startTile = m_getTile(m_pSpaceShip->getGridPosition());
+		startTile->setTileStatus(OPEN);
+		m_pOpenList.push_back(startTile);
+
+		bool goalFound = false; // Flag for while loop.
+
+		// Step 2- Iterate until the open list is empty or the goal is found
+		while (!m_pOpenList.empty() && !goalFound)
+		{
+			float min = INFINITY; // INFINITY == Max tile cost
+			Tile* minTile;
+			int minTileIndex = 0;
+			int count = 0;
+
+			std::vector<Tile*> neighbourList;
+			for (int index = 0; index < NUM_OF_NEIGHBOUR_TILES; index++)
+			{
+				neighbourList.push_back(m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)));
+			}
+			for (Tile* neighbour : neighbourList)
+			{
+				if (neighbour->getTileStatus() != GOAL)
+				{
+					if (neighbour->getTileStatus() < min)
+					{
+						min = neighbour->getTileCost();
+						minTile = neighbour;
+						minTileIndex = count;
+					}
+					count++;
+				}
+				else // We have found the goal, yay!
+				{
+					minTile = neighbour;
+					m_pPathList.push_back(minTile);
+					goalFound = true;
+					break; // Stop the search! 
+				}
+			}
+			// Remove the reference of the current tile in the open list
+			m_pPathList.push_back(m_pOpenList[0]);
+			m_pOpenList.pop_back();
+			// Add the minTile to the openList
+			m_pOpenList.push_back(minTile);
+			minTile->setTileStatus(OPEN);
+			neighbourList.erase(neighbourList.begin() + minTileIndex);
+			// Push all remaining neighbours onto the closed list
+			for (Tile* neighbour : neighbourList)
+			{
+				if (neighbour->getTileStatus() == UNVISITED)
+				{
+					neighbour->setTileStatus(CLOSED);
+					m_pClosedList.push_back(neighbour);
+				}
+			}
+		}
+		// Fixes the last two tiles being swapped
+		Tile* goal = m_pPathList.at(m_pPathList.size() - 2);
+		m_pPathList.erase(m_pPathList.end() - 2);
+		m_pPathList.push_back(goal);
+	}
 }
 
 void PlayScene::m_displayPathList()
