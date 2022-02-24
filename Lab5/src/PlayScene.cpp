@@ -272,6 +272,18 @@ void PlayScene::m_computeTileCosts()
 	}
 }
 
+void PlayScene::m_findShortestPath()
+{
+}
+
+void PlayScene::m_displayPathList()
+{
+}
+
+void PlayScene::m_resetPathfinding()
+{
+}
+
 Tile* PlayScene::m_getTile(int col, int row)
 {
 	return m_pGrid[(row * Config::COL_NUM) + col];
@@ -284,3 +296,10 @@ Tile* PlayScene::m_getTile(glm::vec2 grid_position)
 
 	return m_pGrid[(row * Config::COL_NUM) + col];
 }
+
+void PlayScene::m_moveShip()
+{
+}
+
+int PlayScene::start_position[2];
+int PlayScene::goal_position[2];

@@ -39,6 +39,7 @@ private:
 	void m_setGridEnabled(bool state);
 	bool m_getGridEnabled() const;
 	void m_computeTileCosts();
+
 	void m_findShortestPath(); // Our big algorithm
 	void m_displayPathList(); // In console
 	void m_resetPathfinding();
