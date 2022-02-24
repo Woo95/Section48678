@@ -110,12 +110,30 @@ void PlayScene::handleEvents()
 			m_findShortestPath();
 			m_setGridEnabled(false);
 			m_displayPathList();
+			m_playMoveSound = !m_playMoveSound;
 		}
 	}
 	// Press M to move
 	if (EventManager::Instance().keyPressed(SDL_SCANCODE_M))
 	{
 		m_shipIsMoving = !m_shipIsMoving;
+
+		if (!m_isGridEnabled && m_playMoveSound)
+		{
+			SoundManager::Instance().playSound("marchsound", -1, 0);
+
+
+		}
+
+		if (m_pSpaceShip->getGridPosition() == m_pTarget->getGridPosition())
+		{
+			SoundManager::Instance().playSound("goalsound", 1, 0);
+		}
+		//if (m_pTarget->getGridPosition() == m_pSpaceShip->getGridPosition())
+		//{
+		//	SoundManager::Instance().playSound("goalsound", 0, 0);
+		//}
+
 	}
 }
 
@@ -127,7 +145,12 @@ void PlayScene::start()
 	// Set SFX and Music
 	SoundManager::Instance().load("../Assets/audio/mainBGM.mp3", "main", SOUND_MUSIC);
 	SoundManager::Instance().playMusic("main", -1, 0);
-	SoundManager::Instance().setMusicVolume(5);
+
+	SoundManager::Instance().load("../Assets/audio/yay.ogg", "goalsound", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "marchsound", SOUND_SFX);
+
+	SoundManager::Instance().setAllVolume(5);
+
 
 	m_buildGrid();
 
@@ -499,6 +522,8 @@ void PlayScene::m_moveShip()
 	{
 		m_pSpaceShip->getTransform()->position = m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position + offset;
 		m_pSpaceShip->setGridPosition(m_pPathList[m_moveCounter]->getGridPosition().x, m_pPathList[m_moveCounter]->getGridPosition().y);
+
+
 
 		if (Game::Instance().getFrames() % 20 == 0)
 		{

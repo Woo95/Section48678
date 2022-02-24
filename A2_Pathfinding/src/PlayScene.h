@@ -75,6 +75,7 @@ private:
 	int m_moveCounter = 0;
 	bool m_shipIsMoving = false;
 	void m_moveShip();
+	bool m_playMoveSound = false;
 };
 
 #endif /* defined (__PLAY_SCENE__) */
