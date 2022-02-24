@@ -79,15 +79,32 @@ void PlayScene::start()
 	m_getTile(15, 11)->setTileStatus(GOAL);
 	addChild(m_pTarget);
 
-	// Create Obstacle
-	m_createObstacle(10, 1, offset);
+	// Create fixed Obstacle
 	m_createObstacle(10, 2, offset);
 	m_createObstacle(10, 3, offset);
 	m_createObstacle(10, 4, offset);
 	m_createObstacle(10, 5, offset);
 	m_createObstacle(10, 6, offset);
 	m_createObstacle(10, 7, offset);
-	m_createObstacle(10, 8, offset);
+
+	// Created random Obstacle
+	srand((unsigned)time(0));
+	for (int i = 0; i < 5; i++)
+	{
+		m_randX[i] = rand() % 19;
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		m_randY[i] = rand() % 14;
+	}
+
+	m_createObstacle(m_randX[0], m_randY[0], offset);
+	m_createObstacle(m_randX[1], m_randY[1], offset);
+	m_createObstacle(m_randX[2], m_randY[2], offset);
+	m_createObstacle(m_randX[3], m_randY[3], offset);
+	m_createObstacle(m_randX[4], m_randY[4], offset);
+
+
 
 	m_pSpaceShip = new SpaceShip();
 	m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
@@ -332,6 +349,8 @@ void PlayScene::m_findShortestPath()
 			{
 				if (m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)) == nullptr)
 					continue;
+				if (m_pOpenList[0]->getNeighbourTile(NeighbourTile(index))->getTileStatus() == IMPASSABLE)
+					continue;
 
 				neighbourList.push_back(m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)));
 			}
@@ -419,6 +438,22 @@ void PlayScene::m_resetPathfinding()
 	m_getTile(1, 3)->setTileStatus(START);
 	start_position[0] = m_pSpaceShip->getGridPosition().x;
 	start_position[1] = m_pSpaceShip->getGridPosition().y;
+
+	// set fixed Obstacles to IMPASSABLE status
+	m_getTile(10, 2)->setTileStatus(IMPASSABLE);
+	m_getTile(10, 3)->setTileStatus(IMPASSABLE);
+	m_getTile(10, 4)->setTileStatus(IMPASSABLE);
+	m_getTile(10, 5)->setTileStatus(IMPASSABLE);
+	m_getTile(10, 6)->setTileStatus(IMPASSABLE);
+	m_getTile(10, 7)->setTileStatus(IMPASSABLE);
+
+	// set random Obstacles to IMPASSABLE status
+	m_getTile(m_randX[0], m_randY[0])->setTileStatus(IMPASSABLE);
+	m_getTile(m_randX[1], m_randY[1])->setTileStatus(IMPASSABLE);
+	m_getTile(m_randX[2], m_randY[2])->setTileStatus(IMPASSABLE);
+	m_getTile(m_randX[3], m_randY[3])->setTileStatus(IMPASSABLE);
+	m_getTile(m_randX[4], m_randY[4])->setTileStatus(IMPASSABLE);
+
 	m_moveCounter = 0;
 	m_shipIsMoving = false;
 }

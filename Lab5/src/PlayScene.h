@@ -8,6 +8,7 @@
 #include "SpaceShip.h"
 #include "Obstacle.h"
 #include "Tile.h"
+#include <ctime>
 
 class PlayScene : public Scene
 {
@@ -64,6 +65,8 @@ private:
 	int m_moveCounter = 0;
 	bool m_shipIsMoving = false;
 	void m_moveShip();
+
+	int m_randX[4], m_randY[4];
 };
 
 #endif /* defined (__PLAY_SCENE__) */
