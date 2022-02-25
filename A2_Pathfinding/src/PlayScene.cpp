@@ -174,6 +174,9 @@ void PlayScene::start()
 	m_createObstacle(10, 6, offset);
 	m_createObstacle(10, 8, offset);
 
+	// Created random Obstacle
+	m_createRandomObstacle();
+
 	/* Instructions Label */
 	m_pInstructionsLabel = new Label("Press R to restart", "Consolas");
 	m_pInstructionsLabel->getTransform()->position = glm::vec2(103.0f, 10.0f);
@@ -310,9 +313,28 @@ void PlayScene::m_buildGrid()
 void PlayScene::m_createObstacle(int x, int y, glm::vec2 offset)
 {
 	m_obstacle = new Obstacle();
+	m_pObstacle.push_back(m_obstacle);
 	m_obstacle->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
 	m_getTile(x, y)->setTileStatus(IMPASSABLE);
 	addChild(m_obstacle);
+}
+
+void PlayScene::m_createRandomObstacle()
+{
+	srand((unsigned)time(0));
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+	int count = 0;
+	Tile* pTile;
+
+	while (count < 7)
+	{
+		pTile = m_getTile(rand() % Config::COL_NUM, rand() % Config::ROW_NUM);
+		if (pTile->getTileStatus() == UNVISITED)
+		{
+			m_createObstacle(pTile->getGridPosition().x, pTile->getGridPosition().y, offset);
+			count++;
+		}
+	}
 }
 
 void PlayScene::m_findShortestPath()
@@ -582,6 +604,12 @@ void PlayScene::GUI_Function()
 	{
 		m_resetPathfinding();
 		m_setGridEnabled(false);
+		while (m_pObstacle.size() >= 10)
+		{
+			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
+			m_pObstacle.pop_back();
+		}
+		m_createRandomObstacle();
 	}
 
 	ImGui::Separator();
