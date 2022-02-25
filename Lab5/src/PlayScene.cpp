@@ -7,8 +7,6 @@
 #include "imgui_sdl.h"
 #include "Renderer.h"
 #include "Util.h"
-#include "Obstacle.h"
-#include "NavigationObject.h"
 
 PlayScene::PlayScene()
 {
@@ -105,7 +103,6 @@ void PlayScene::start()
 	m_createObstacle(10, 2, offset);
 	m_createObstacle(10, 3, offset);
 	m_createObstacle(10, 6, offset);
-	m_createObstacle(10, 7, offset);
 
 	// Created random Obstacle
 	m_createRandomObstacle();
@@ -187,6 +184,7 @@ void PlayScene::GUI_Function()
 			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
 			m_pObstacle.pop_back();
 		}
+		m_resetPathfinding();
 		m_createRandomObstacle();
 	}
 
