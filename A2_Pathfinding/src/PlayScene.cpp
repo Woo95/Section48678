@@ -165,13 +165,9 @@ void PlayScene::start()
 	// Create Obstacle
 	m_createObstacle(5, 5, offset);
 	m_createObstacle(7, 5, offset);
-	m_createObstacle(7, 7, offset);
 	m_createObstacle(8, 9, offset);
 	m_createObstacle(9, 9, offset);
 	m_createObstacle(10, 7, offset);
-	m_createObstacle(10, 4, offset);
-	m_createObstacle(10, 5, offset);
-	m_createObstacle(10, 6, offset);
 	m_createObstacle(10, 8, offset);
 
 	// Created random Obstacle
@@ -315,6 +311,7 @@ void PlayScene::m_createObstacle(int x, int y, glm::vec2 offset)
 	m_obstacle = new Obstacle();
 	m_pObstacle.push_back(m_obstacle);
 	m_obstacle->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
+	m_obstacle->setGridPosition(x, y);
 	m_getTile(x, y)->setTileStatus(IMPASSABLE);
 	addChild(m_obstacle);
 }
@@ -326,7 +323,7 @@ void PlayScene::m_createRandomObstacle()
 	int count = 0;
 	Tile* pTile;
 
-	while (count < 7)
+	while (count < 5)
 	{
 		pTile = m_getTile(rand() % Config::COL_NUM, rand() % Config::ROW_NUM);
 		if (pTile->getTileStatus() == UNVISITED)
@@ -455,16 +452,15 @@ void PlayScene::m_resetPathfinding()
 	m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(START);
 	//start_position[0] = m_pSpaceShip->getGridPosition().x;
 	//start_position[1] = m_pSpaceShip->getGridPosition().y;
-	m_getTile(5, 5)->setTileStatus(IMPASSABLE);
-	m_getTile(7, 5)->setTileStatus(IMPASSABLE);
-	m_getTile(7, 7)->setTileStatus(IMPASSABLE);
-	m_getTile(8, 9)->setTileStatus(IMPASSABLE);
-	m_getTile(9, 9)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 7)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 4)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 5)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 6)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 8)->setTileStatus(IMPASSABLE);
+	
+	Obstacle* obstacle;
+	for (int i = 0; i < m_pObstacle.size(); i++)
+	{
+		obstacle = m_pObstacle[i];
+		m_getTile(obstacle->getGridPosition())->setTileStatus(IMPASSABLE);
+	}
+
+
 	m_moveCounter = 0;
 	m_shipIsMoving = false;
 }
@@ -604,7 +600,7 @@ void PlayScene::GUI_Function()
 	{
 		m_resetPathfinding();
 		m_setGridEnabled(false);
-		while (m_pObstacle.size() >= 10)
+		while (m_pObstacle.size() >= 6)
 		{
 			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
 			m_pObstacle.pop_back();

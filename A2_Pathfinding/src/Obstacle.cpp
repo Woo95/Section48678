@@ -36,3 +36,13 @@ void Obstacle::update()
 void Obstacle::clean()
 {
 }
+
+glm::vec2 Obstacle::getGridPosition() const
+{
+	return m_gridPosition;
+}
+
+void Obstacle::setGridPosition(float col, float row)
+{
+	m_gridPosition = glm::vec2(col, row);
+}
