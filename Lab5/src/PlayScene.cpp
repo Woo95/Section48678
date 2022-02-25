@@ -58,9 +58,28 @@ void PlayScene::handleEvents()
 void PlayScene::m_createObstacle(int x, int y, glm::vec2 offset)
 {
 	m_obstacle = new Obstacle();
+	m_pObstacle.push_back(m_obstacle);
 	m_obstacle->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
 	m_getTile(x, y)->setTileStatus(IMPASSABLE);
 	addChild(m_obstacle);
+}
+
+void PlayScene::m_createRandomObstacle()
+{
+	srand((unsigned)time(0));
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+	int count = 0;
+	Tile* pTile;
+
+	while (count < 7)
+	{
+		pTile = m_getTile(rand() % Config::COL_NUM, rand() % Config::ROW_NUM);
+		if (pTile->getTileStatus() == UNVISITED)
+		{
+			m_createObstacle(pTile->getGridPosition().x, pTile->getGridPosition().y, offset);
+			count++;
+		}
+	}
 }
 
 void PlayScene::start()
@@ -88,22 +107,7 @@ void PlayScene::start()
 	m_createObstacle(10, 7, offset);
 
 	// Created random Obstacle
-	srand((unsigned)time(0));
-	for (int i = 0; i < 5; i++)
-	{
-		m_randX[i] = rand() % 19;
-	}
-	for (int i = 0; i < 5; i++)
-	{
-		m_randY[i] = rand() % 14;
-	}
-
-	m_createObstacle(m_randX[0], m_randY[0], offset);
-	m_createObstacle(m_randX[1], m_randY[1], offset);
-	m_createObstacle(m_randX[2], m_randY[2], offset);
-	m_createObstacle(m_randX[3], m_randY[3], offset);
-	m_createObstacle(m_randX[4], m_randY[4], offset);
-
+	m_createRandomObstacle();
 
 
 	m_pSpaceShip = new SpaceShip();
@@ -177,6 +181,12 @@ void PlayScene::GUI_Function()
 	if (ImGui::Button("Reset"))
 	{
 		m_resetPathfinding();
+		while (m_pObstacle.size() >= 6)
+		{
+			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
+			m_pObstacle.pop_back();
+		}		
+		m_createRandomObstacle();
 	}
 
 	ImGui::Separator();
@@ -343,10 +353,11 @@ void PlayScene::m_findShortestPath()
 			Tile* minTile;
 			int minTileIndex = 0;
 			int count = 0;
-
 			std::vector<Tile*> neighbourList;
+
 			for (int index = 0; index < NUM_OF_NEIGHBOUR_TILES; index++)
 			{
+				//const auto neighbour = m_pOpenList[0]->getNeighbourTile(static_cast<NeighbourTile>(index));
 				if (m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)) == nullptr)
 					continue;
 				if (m_pOpenList[0]->getNeighbourTile(NeighbourTile(index))->getTileStatus() == IMPASSABLE)
@@ -438,21 +449,6 @@ void PlayScene::m_resetPathfinding()
 	m_getTile(1, 3)->setTileStatus(START);
 	start_position[0] = m_pSpaceShip->getGridPosition().x;
 	start_position[1] = m_pSpaceShip->getGridPosition().y;
-
-	// set fixed Obstacles to IMPASSABLE status
-	m_getTile(10, 2)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 3)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 4)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 5)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 6)->setTileStatus(IMPASSABLE);
-	m_getTile(10, 7)->setTileStatus(IMPASSABLE);
-
-	// set random Obstacles to IMPASSABLE status
-	m_getTile(m_randX[0], m_randY[0])->setTileStatus(IMPASSABLE);
-	m_getTile(m_randX[1], m_randY[1])->setTileStatus(IMPASSABLE);
-	m_getTile(m_randX[2], m_randY[2])->setTileStatus(IMPASSABLE);
-	m_getTile(m_randX[3], m_randY[3])->setTileStatus(IMPASSABLE);
-	m_getTile(m_randX[4], m_randY[4])->setTileStatus(IMPASSABLE);
 
 	m_moveCounter = 0;
 	m_shipIsMoving = false;

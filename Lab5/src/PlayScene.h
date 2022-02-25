@@ -39,11 +39,13 @@ private:
 
 	// Pathfinding Objects and Functions
 	std::vector<Tile*> m_pGrid;
+	std::vector<Obstacle*> m_pObstacle;
 	void m_buildGrid();
 	void m_setGridEnabled(bool state);
 	bool m_getGridEnabled() const;
 	void m_computeTileCosts();
 	void m_createObstacle(int, int, glm::vec2);
+	void m_createRandomObstacle();
 
 	void m_findShortestPath(); // Our big algorithm
 	void m_displayPathList(); // In console
