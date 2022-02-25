@@ -74,9 +74,11 @@ void PlayScene::handleEvents()
 	if (m_isGridEnabled == true && EventManager::Instance().getMouseButton(0))
 	{
 		// To use the variables for the left and right click events 
-		auto x = EventManager::Instance().getMousePosition().x / 40;
-		auto y = EventManager::Instance().getMousePosition().y / 40;
+		auto x = (int)EventManager::Instance().getMousePosition().x / 40;
+		auto y = (int)EventManager::Instance().getMousePosition().y / 40;
 		auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+		
+		m_getTile(m_pTarget->getGridPosition())->setTileStatus(GOAL);
 		if (m_getTile(x, y)->getTileStatus() == UNVISITED)
 		{
 			m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(UNVISITED);
@@ -123,11 +125,6 @@ void PlayScene::handleEvents()
 		{
 			SoundManager::Instance().playSound("marchsound", -1, 0);
 		}
-
-		//if (m_pSpaceShip->getGridPosition() == m_pTarget->getGridPosition())
-		//{
-		//	SoundManager::Instance().playSound("goalsound", -1, 0);
-		//}
 	}
 }
 
