@@ -532,7 +532,11 @@ void PlayScene::m_moveShip()
 		m_pSpaceShip->getTransform()->position = m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position + offset;
 		m_pSpaceShip->setGridPosition(m_pPathList[m_moveCounter]->getGridPosition().x, m_pPathList[m_moveCounter]->getGridPosition().y);
 
+		m_pSpaceShip->setDesiredVelocity(m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position + offset);
 
+		const glm::vec2 steering_direction = m_pSpaceShip->getDesiredVelocity() - m_pSpaceShip->getCurrentDirection();
+
+		m_pSpaceShip->LookWhereYoureGoing(steering_direction);
 
 		if (Game::Instance().getFrames() % 20 == 0)
 		{

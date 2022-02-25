@@ -103,19 +103,15 @@ void SpaceShip::Seek()
 
 void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction)
 {
-	float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction) - 90;
+	setDesiredVelocity(target_direction);
 
-	const float turn_sensitivity = 3.0f;
+	const glm::vec2 steering_direction = getDesiredVelocity() - getCurrentDirection();
 
-	/*if (getCollisionWhiskers()[0])
-	{
-		setCurrentHeading(getCurrentHeading() + getTurnRate());
-	}
-	else if (getCollisionWhiskers()[2])
-	{
-		setCurrentHeading(getCurrentHeading() - getTurnRate());
-	}
-	else if (abs(target_rotation) > turn_sensitivity)
+	const float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction);
+
+	const float turn_sensitivity = 5.0f;
+
+	if (abs(target_rotation) > turn_sensitivity)
 	{
 		if (target_rotation > 0.0f)
 		{
@@ -127,7 +123,32 @@ void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction)
 		}
 	}
 
-	updateWhiskers(getWhiskerAngle());*/
+
+	//float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction) - 90;
+
+	//const float turn_sensitivity = 3.0f;
+
+	//if (getCollisionWhiskers()[0])
+	//{
+	//	setCurrentHeading(getCurrentHeading() + getTurnRate());
+	//}
+	//else if (getCollisionWhiskers()[2])
+	//{
+	//	setCurrentHeading(getCurrentHeading() - getTurnRate());
+	//}
+	//else if (abs(target_rotation) > turn_sensitivity)
+	//{
+	//	if (target_rotation > 0.0f)
+	//	{
+	//		setCurrentHeading(getCurrentHeading() + getTurnRate());
+	//	}
+	//	else if (target_rotation < 0.0f)
+	//	{
+	//		setCurrentHeading(getCurrentHeading() - getTurnRate());
+	//	}
+	//}
+
+	//updateWhiskers(getWhiskerAngle());
 }
 
 void SpaceShip::m_move()
