@@ -89,8 +89,8 @@ void PlayScene::handleEvents()
 	if (m_isGridEnabled == true && EventManager::Instance().getMouseButton(2))
 	{
 		// To use the variables for the left and right click events 
-		auto x = EventManager::Instance().getMousePosition().x / 40;
-		auto y = EventManager::Instance().getMousePosition().y / 40;
+		auto x = (int)EventManager::Instance().getMousePosition().x / 40;
+		auto y = (int)EventManager::Instance().getMousePosition().y / 40;
 		auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 		if (m_getTile(x, y)->getTileStatus() == UNVISITED)
 		{
@@ -99,6 +99,7 @@ void PlayScene::handleEvents()
 			m_pTarget->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
 			m_getTile(x, y)->setTileStatus(GOAL);
 		}
+		m_computeTileCost();
 	}
 
 	// Press F to reset and then find shortPath
