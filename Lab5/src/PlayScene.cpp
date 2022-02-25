@@ -7,6 +7,8 @@
 #include "imgui_sdl.h"
 #include "Renderer.h"
 #include "Util.h"
+#include "Obstacle.h"
+#include "NavigationObject.h"
 
 PlayScene::PlayScene()
 {

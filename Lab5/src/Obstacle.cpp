@@ -3,6 +3,7 @@
 
 #include "SoundManager.h"
 #include "TextureManager.h"
+#include "NavigationObject.h"
 
 Obstacle::Obstacle()
 {
