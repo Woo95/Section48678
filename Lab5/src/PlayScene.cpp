@@ -60,6 +60,7 @@ void PlayScene::m_createObstacle(int x, int y, glm::vec2 offset)
 	m_obstacle = new Obstacle();
 	m_pObstacle.push_back(m_obstacle);
 	m_obstacle->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
+	m_obstacle->setGridPosition(x, y);
 	m_getTile(x, y)->setTileStatus(IMPASSABLE);
 	addChild(m_obstacle);
 }
@@ -71,7 +72,7 @@ void PlayScene::m_createRandomObstacle()
 	int count = 0;
 	Tile* pTile;
 
-	while (count < 7)
+	while (count < 5)
 	{
 		pTile = m_getTile(rand() % Config::COL_NUM, rand() % Config::ROW_NUM);
 		if (pTile->getTileStatus() == UNVISITED)
@@ -101,8 +102,6 @@ void PlayScene::start()
 	// Create fixed Obstacle
 	m_createObstacle(10, 2, offset);
 	m_createObstacle(10, 3, offset);
-	m_createObstacle(10, 4, offset);
-	m_createObstacle(10, 5, offset);
 	m_createObstacle(10, 6, offset);
 	m_createObstacle(10, 7, offset);
 
@@ -181,11 +180,11 @@ void PlayScene::GUI_Function()
 	if (ImGui::Button("Reset"))
 	{
 		m_resetPathfinding();
-		while (m_pObstacle.size() >= 6)
+		while (m_pObstacle.size() >= 4)
 		{
 			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
 			m_pObstacle.pop_back();
-		}		
+		}
 		m_createRandomObstacle();
 	}
 
@@ -449,6 +448,13 @@ void PlayScene::m_resetPathfinding()
 	m_getTile(1, 3)->setTileStatus(START);
 	start_position[0] = m_pSpaceShip->getGridPosition().x;
 	start_position[1] = m_pSpaceShip->getGridPosition().y;
+
+	Obstacle* obstacle;
+	for (int i = 0; i < m_pObstacle.size(); i++)
+	{
+		obstacle = m_pObstacle[i];
+		m_getTile(obstacle->getGridPosition())->setTileStatus(IMPASSABLE);
+	}
 
 	m_moveCounter = 0;
 	m_shipIsMoving = false;
