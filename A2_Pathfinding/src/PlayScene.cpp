@@ -375,6 +375,7 @@ void PlayScene::m_findShortestPath()
 					}
 					count++;
 				}
+
 				else // We have found the goal, yay!
 				{
 					minTile = neighbour;
@@ -529,17 +530,35 @@ void PlayScene::m_moveShip()
 
 	if (m_moveCounter < m_pPathList.size())
 	{
+		glm::vec2 nextTilePos;
+
+		auto pathTile_gridPosition = m_pPathList[m_moveCounter]->getGridPosition();
+
 		m_pSpaceShip->getTransform()->position = m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position + offset;
+
+		nextTilePos = m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position;
+
+		const glm::vec2 steering_dir = m_pSpaceShip->getGridPosition() - pathTile_gridPosition;
+
+		m_pSpaceShip->LookWhereYoureGoing(steering_dir, nextTilePos);
+
 		m_pSpaceShip->setGridPosition(m_pPathList[m_moveCounter]->getGridPosition().x, m_pPathList[m_moveCounter]->getGridPosition().y);
 
-		m_pSpaceShip->setDesiredVelocity(m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position + offset);
 
-		const glm::vec2 steering_direction = m_pSpaceShip->getDesiredVelocity() - m_pSpaceShip->getCurrentDirection();
-
-		m_pSpaceShip->LookWhereYoureGoing(steering_direction);
 
 		if (Game::Instance().getFrames() % 20 == 0)
 		{
+
+			std::cout << "Ship position" << std::endl;
+			std::cout << m_pSpaceShip->getTransform()->position.x << std::endl;
+			std::cout << m_pSpaceShip->getTransform()->position.y << std::endl;
+			std::cout << std::endl;
+
+			std::cout << "Target position" << std::endl;
+			std::cout << nextTilePos.x << std::endl;
+			std::cout << nextTilePos.y << std::endl;
+			std::cout << std::endl;
+
 			m_moveCounter++;
 		}
 	}

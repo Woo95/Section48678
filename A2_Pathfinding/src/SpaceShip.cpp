@@ -89,39 +89,91 @@ void SpaceShip::setDesiredVelocity(const glm::vec2 target_position)
 	m_desiredVelocity = Util::normalize(target_position - getTransform()->position);
 }
 
-void SpaceShip::Seek()
+void SpaceShip::Seek(const glm::vec2 target_direction)
 {
+	setTargetPosition(target_direction);
 
 	setDesiredVelocity(getTargetPosition());
 
 	const glm::vec2 steering_direction = getDesiredVelocity() - getCurrentDirection();
 
-	LookWhereYoureGoing(steering_direction);
+	//LookWhereYoureGoing(steering_direction);
 
-	getRigidBody()->acceleration = getCurrentDirection() * getAccelerationRate();
+	//getRigidBody()->acceleration = getCurrentDirection() * getAccelerationRate();
 }
 
-void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction)
+void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction, const glm::vec2 ship_direction)
 {
-	setDesiredVelocity(target_direction);
+	float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction) - 90;
 
-	const glm::vec2 steering_direction = getDesiredVelocity() - getCurrentDirection();
+	setCurrentHeading(getCurrentHeading() + target_rotation);
 
-	const float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction);
 
-	const float turn_sensitivity = 5.0f;
 
-	if (abs(target_rotation) > turn_sensitivity)
-	{
-		if (target_rotation > 0.0f)
-		{
-			setCurrentHeading(getCurrentHeading() + getTurnRate());
-		}
-		else if (target_rotation < 0.0f)
-		{
-			setCurrentHeading(getCurrentHeading() - getTurnRate());
-		}
-	}
+	//glm::vec2 currentTargetPos = target_direction;
+	//glm::vec2 currentShipPos = ship_direction;
+
+
+	//if (currentShipPos.x - currentTargetPos.x == 20) 	// look right
+	//{
+	//	setCurrentHeading(90);
+	//}
+	//else if (currentShipPos.x - currentTargetPos.x == -20 ) // look down right
+	//{
+	//	setCurrentHeading(45);
+	//}
+	//else if (currentShipPos.x - currentTargetPos.x == -20 ) // look  down
+	//{
+	//	setCurrentHeading(90);
+	//}
+	//else if (currentShipPos.x - currentTargetPos.x == -20) 	// look down left
+	//{
+	//	setCurrentHeading(135);
+	//}
+	//else if (currentShipPos.x - currentTargetPos.x == -20 ) // look left
+	//{
+	//	setCurrentHeading(180);
+	//}
+	//else if (currentShipPos.x - currentTargetPos.x == -20 ) // look up left
+	//{
+	//	setCurrentHeading(225);
+	//}
+	//else if (currentShipPos.x - currentTargetPos.x == -20) // look up 
+	//{
+	//	setCurrentHeading(270);
+	//}
+	//else if (currentShipPos.x - currentTargetPos.x == -20) // look up right
+	//{
+	//	setCurrentHeading(315);
+	//}
+	//else if (currentShipPos.x > currentTargetPos.x) // look left
+	//{
+	//	setCurrentHeading(180);
+	//}
+	//else if (ship_direction.x > target_direction.x)
+	//{
+	//	setCurrentHeading(180 + getTurnRate());
+	//}
+	//else if (ship_direction.x > target_direction.x)
+	//{
+	//	setCurrentHeading(180 + getTurnRate());
+	//}
+
+	//const float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction);
+
+	//const float turn_sensitivity = 5.0f;
+
+	//if (target_rotation > turn_sensitivity)
+	//{
+	//	if (target_rotation > 0.0f)
+	//	{
+	//		setCurrentHeading(getCurrentHeading() + getTurnRate());
+	//	}
+	//	else if (target_rotation < 0.0f)
+	//	{
+	//		setCurrentHeading(getCurrentHeading() - getTurnRate());
+	//	}
+	//}
 
 
 	//float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction) - 90;
@@ -153,7 +205,7 @@ void SpaceShip::LookWhereYoureGoing(const glm::vec2 target_direction)
 
 void SpaceShip::m_move()
 {
-	Seek();
+	//Seek();
 	
 	//                                   final Position     position term    velocity term     acceleration term
 	// kinematic equation for motion --> Pf            =      Pi     +     Vi*(time)    +   (0.5)*Ai*(time * time)
