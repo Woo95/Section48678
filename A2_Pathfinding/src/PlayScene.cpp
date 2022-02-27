@@ -261,45 +261,45 @@ void PlayScene::m_buildGrid()
 				tile->setNeighbourTile(LEFT_TILE, m_getTile(col - 1, row));
 			}
 			
-			// top right
-			if (row == 0 || col == Config::COL_NUM - 1)
-			{
-				tile->setNeighbourTile(TOP_RIGHT_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(TOP_RIGHT_TILE, m_getTile(col + 1, row - 1));
-			}
+			//// top right
+			//if (row == 0 || col == Config::COL_NUM - 1)
+			//{
+			//	tile->setNeighbourTile(TOP_RIGHT_TILE, nullptr);
+			//}
+			//else
+			//{
+			//	tile->setNeighbourTile(TOP_RIGHT_TILE, m_getTile(col + 1, row - 1));
+			//}
 
-			// top left
-			if (row == 0 || col == 0)
-			{
-				tile->setNeighbourTile(TOP_LEFT_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(TOP_LEFT_TILE, m_getTile(col - 1, row - 1));
-			}
+			//// top left
+			//if (row == 0 || col == 0)
+			//{
+			//	tile->setNeighbourTile(TOP_LEFT_TILE, nullptr);
+			//}
+			//else
+			//{
+			//	tile->setNeighbourTile(TOP_LEFT_TILE, m_getTile(col - 1, row - 1));
+			//}
 
-			// bottom right
-			if (row == Config::ROW_NUM - 1 || col == Config::COL_NUM - 1)
-			{
-				tile->setNeighbourTile(BOTTOM_RIGHT_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(BOTTOM_RIGHT_TILE, m_getTile(col + 1, row + 1));
-			}
+			//// bottom right
+			//if (row == Config::ROW_NUM - 1 || col == Config::COL_NUM - 1)
+			//{
+			//	tile->setNeighbourTile(BOTTOM_RIGHT_TILE, nullptr);
+			//}
+			//else
+			//{
+			//	tile->setNeighbourTile(BOTTOM_RIGHT_TILE, m_getTile(col + 1, row + 1));
+			//}
 
-			// bottom left
-			if (row == Config::ROW_NUM - 1 || col == 0)
-			{
-				tile->setNeighbourTile(BOTTOM_LEFT_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(BOTTOM_LEFT_TILE, m_getTile(col - 1, row + 1));
-			}
+			//// bottom left
+			//if (row == Config::ROW_NUM - 1 || col == 0)
+			//{
+			//	tile->setNeighbourTile(BOTTOM_LEFT_TILE, nullptr);
+			//}
+			//else
+			//{
+			//	tile->setNeighbourTile(BOTTOM_LEFT_TILE, m_getTile(col - 1, row + 1));
+			//}
 		}
 	}
 }
@@ -441,6 +441,7 @@ void PlayScene::m_resetPathfinding()
 	// Reset target data
 	//m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
 	//m_pTarget->setGridPosition(15.0f, 11.0f);
+
 	m_getTile(m_pTarget->getGridPosition())->setTileStatus(GOAL);
 	//goal_position[0] = m_pTarget->getGridPosition().x;
 	//goal_position[1] = m_pTarget->getGridPosition().y;
@@ -448,6 +449,7 @@ void PlayScene::m_resetPathfinding()
 	// Reset ship data
 	//m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
 	//m_pSpaceShip->setGridPosition(1.0f, 3.0f);
+
 	m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(START);
 	//start_position[0] = m_pSpaceShip->getGridPosition().x;
 	//start_position[1] = m_pSpaceShip->getGridPosition().y;
@@ -621,7 +623,7 @@ void PlayScene::GUI_Function()
 	{
 		m_resetPathfinding();
 		m_setGridEnabled(false);
-		while (m_pObstacle.size() >= 6)
+		while (m_pObstacle.size() >= 7)
 		{
 			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
 			m_pObstacle.pop_back();
@@ -639,7 +641,7 @@ void PlayScene::GUI_Function()
 			totalCost += m_pPathList[i]->getTileCost();
 		}
 		char array[10];
-		//sprintf(array, "%.1f", m_pPathList[0]->getTileCost());
+
 		sprintf(array, "%.1f", totalCost);
 		ImGui::Text(array);
 	}
