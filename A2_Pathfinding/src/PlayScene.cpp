@@ -633,8 +633,14 @@ void PlayScene::GUI_Function()
 	ImGui::Text("Total Cost");
 	if (m_pPathList.size() > 0)
 	{
+		float totalCost=0;
+		for (int i = 0; i < m_pPathList.size(); i++)
+		{
+			totalCost += m_pPathList[i]->getTileCost();
+		}
 		char array[10];
-		sprintf(array, "%.1f", m_pPathList[0]->getTileCost());
+		//sprintf(array, "%.1f", m_pPathList[0]->getTileCost());
+		sprintf(array, "%.1f", totalCost);
 		ImGui::Text(array);
 	}
 
