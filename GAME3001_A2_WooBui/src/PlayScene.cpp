@@ -62,7 +62,7 @@ void PlayScene::handleEvents()
 			m_resetPathfinding();
 		}
 		
-		else 
+		else   
 		{
 			m_isGridEnabled = false;
 			m_setGridEnabled(m_isGridEnabled);
