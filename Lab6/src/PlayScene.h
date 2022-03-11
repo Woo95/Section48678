@@ -7,7 +7,7 @@
 #include "Target.h"
 #include "SpaceShip.h"
 #include "Obstacle.h"
-#include "Tile.h"
+#include "PathNode.h"
 #include <ctime>
 
 class PlayScene : public Scene
@@ -28,47 +28,27 @@ private:
 	std::string m_guiTitle;
 	glm::vec2 m_mousePosition;
 	bool m_isGridEnabled;
-	static int start_position[2];
-	static int goal_position[2];
 
 
 	// Game Objects
 	Target* m_pTarget;
 	SpaceShip* m_pSpaceShip;
-	Obstacle* m_obstacle;
+	Obstacle* m_obstacle1;
+	Obstacle* m_obstacle2;
+	Obstacle* m_obstacle3;
 
 	// Pathfinding Objects and Functions
-	std::vector<Tile*> m_pGrid;
+	std::vector<PathNode*> m_pGrid;
 	std::vector<Obstacle*> m_pObstacle;
 	void m_buildGrid();
-	void m_setGridEnabled(bool state);
-	bool m_getGridEnabled() const;
-	void m_computeTileCosts();
-	void m_createObstacle(int, int, glm::vec2);
-	void m_createRandomObstacle();
-
-	void m_findShortestPath(); // Our big algorithm
-	void m_displayPathList(); // In console
-	void m_resetPathfinding();
-
-	// Tile lists for pathfinding
-	std::vector<Tile*> m_pOpenList;
-	std::vector<Tile*> m_pClosedList;
-	std::vector<Tile*> m_pPathList;
-
+	void m_toggleGrid(bool state);
+	void m_CheckShipLOS(DisplayObject* target_object);
+	
 	// convenience functions
-	Tile* m_getTile(int col, int row);
-	Tile* m_getTile(glm::vec2 grid_position);
+	void m_storeObstacles();
+	void m_clearNodes();
 
-	// heuristic
-	Heuristic m_currentHeuristic;
-
-	// Ship movement
-	int m_moveCounter = 0;
-	bool m_shipIsMoving = false;
-	void m_moveShip();
-
-	int m_randX[4], m_randY[4];
+	static int m_ObstacleBuffer;
 };
 
 #endif /* defined (__PLAY_SCENE__) */
