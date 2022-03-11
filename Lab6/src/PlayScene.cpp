@@ -99,6 +99,7 @@ void PlayScene::start()
 	m_getTile(15, 11)->setTileStatus(GOAL);
 	addChild(m_pTarget);
 
+	/*
 	// Create fixed Obstacle
 	m_createObstacle(10, 2, offset);
 	m_createObstacle(10, 3, offset);
@@ -106,6 +107,7 @@ void PlayScene::start()
 
 	// Created random Obstacle
 	m_createRandomObstacle();
+	*/
 
 
 	m_pSpaceShip = new SpaceShip();
@@ -179,13 +181,13 @@ void PlayScene::GUI_Function()
 	if (ImGui::Button("Reset"))
 	{
 		m_resetPathfinding();
-		while (m_pObstacle.size() >= 4)
+		/*while (m_pObstacle.size() >= 4)
 		{
 			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
 			m_pObstacle.pop_back();
-		}
+		}*/
 		m_resetPathfinding();
-		m_createRandomObstacle();
+		//m_createRandomObstacle();
 	}
 
 	ImGui::Separator();
