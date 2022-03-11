@@ -7,6 +7,7 @@
 #include "ShapeType.h"
 #include <SDL.h>
 #include "Renderer.h"
+#include "GameObject.h"
 
 class Util
 {
@@ -65,6 +66,8 @@ public:
 	static void DrawFilledRect(glm::vec2 position, int width, int height, glm::vec4 fill_colour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), SDL_Renderer* renderer = Renderer::Instance().getRenderer());
 	static void DrawCircle(glm::vec2 centre, int radius, glm::vec4 colour = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), ShapeType type = SYMMETRICAL, SDL_Renderer* renderer = Renderer::Instance().getRenderer());
 	static void DrawCapsule(glm::vec2 position, int width, int height, glm::vec4 colour = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), SDL_Renderer* renderer = Renderer::Instance().getRenderer());
+
+	static float getClosestEdge(glm::vec2 vecA, GameObject* object);
 };
 
 

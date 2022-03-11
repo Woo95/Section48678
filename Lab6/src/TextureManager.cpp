@@ -146,6 +146,35 @@ void TextureManager::draw(const std::string & id, const int x, const int y, cons
 	SDL_RenderCopyEx(Renderer::Instance().getRenderer(), m_textureMap[id].get(), &srcRect, &destRect, angle, nullptr, flip);
 }
 
+void TextureManager::draw(const std::string& id, int x, int y, GameObject* g, double angle, int alpha, bool centered, SDL_RendererFlip flip)
+{
+	SDL_Rect srcRect;
+	SDL_Rect destRect;
+
+	int textureWidth, textureHeight;
+
+	SDL_QueryTexture(m_textureMap[id].get(), nullptr, nullptr, &textureWidth, &textureHeight);
+
+	srcRect = { 0, 0, textureWidth, textureHeight };
+
+	destRect.w = g->getWidth();
+	destRect.h = g->getHeight();
+
+	if (centered) {
+		const int xOffset = destRect.w * 0.5;
+		const int yOffset = destRect.h * 0.5;
+		destRect.x = x - xOffset;
+		destRect.y = y - yOffset;
+	}
+	else {
+		destRect.x = x;
+		destRect.y = y;
+	}
+
+	SDL_SetTextureAlphaMod(m_textureMap[id].get(), alpha);
+	SDL_RenderCopyEx(Renderer::Instance().getRenderer(), m_textureMap[id].get(), &srcRect, &destRect, angle, nullptr, flip);
+}
+
 void TextureManager::drawFrame(const std::string & id, const int x, const int y, const int frame_width,
 	const int frame_height, int& current_row,
 	int& current_frame, int frame_number, int row_number,

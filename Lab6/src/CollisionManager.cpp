@@ -100,6 +100,67 @@ bool CollisionManager::AABBCheck(GameObject* object1, GameObject* object2)
 	return false;
 }
 
+bool CollisionManager::AABBCheckWithBuffer(GameObject* object1, GameObject* object2, int buffer)
+{
+	// prepare relevant variables
+	auto p1 = object1->getTransform()->position;
+	auto p2 = object2->getTransform()->position;
+	const float p1Width = object1->getWidth();
+	const float p1Height = object1->getHeight();
+	float p2Width = object2->getWidth();
+	float p2Height = object2->getHeight();
+
+	if (object1->isCentered())
+	{
+		p1 += glm::vec2(-p1Width * 0.5f, -p1Height * 0.5f);
+	}
+
+	if (object2->isCentered())
+	{
+		p2 += glm::vec2(-p2Width * 0.5f, -p2Height * 0.5f);
+	}
+
+	// Add buffers.
+	p2.x -= (buffer / 2);
+	p2.y -= (buffer / 2);
+	p2Width += buffer;
+	p2Height += buffer;
+
+	if (
+		p1.x < p2.x + p2Width &&
+		p1.x + p1Width > p2.x &&
+		p1.y < p2.y + p2Height &&
+		p1.y + p1Height > p2.y
+		)
+	{
+		if (!object1->getRigidBody()->isColliding)
+		{
+			object1->getRigidBody()->isColliding = true;
+
+			switch (object2->getType())
+			{
+			case AGENT:
+				std::cout << "Collision with SpaceShip!" << std::endl;
+				SoundManager::Instance().playSound("boom", 0);
+				break;
+			default:
+
+				break;
+			}
+
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		object1->getRigidBody()->isColliding = false;
+		return false;
+	}
+
+	return false;
+}
+
 bool CollisionManager::lineLineCheck(const glm::vec2 line1_start, const glm::vec2 line1_end, const glm::vec2 line2_start, const glm::vec2 line2_end)
 {
 	const auto x1 = line1_start.x;
@@ -339,53 +400,24 @@ bool CollisionManager::LOSCheck(Agent* agent, glm::vec2 end_point, const std::ve
 {
 	const auto start_point = agent->getTransform()->position;
 
-	for (auto object : objects)
-	{
-		auto objectOffset = glm::vec2(object->getWidth() * 0.5f, object->getHeight() * 0.5f);
-		const auto rect_start = object->getTransform()->position - objectOffset;
-		const auto width = object->getWidth();
-		const auto height = object->getHeight();
-
-		switch (object->getType())
+	// Check collision with obstacles first.
+		for (auto object : objects)
 		{
-		case OBSTACLE:
-			if (lineRectCheck(start_point, end_point, rect_start, width, height))
+			auto objectOffset = glm::vec2(object->getWidth() * 0.5f, object->getHeight() * 0.5f);
+			if (lineRectCheck(start_point, end_point, object->getTransform()->position - objectOffset,
+				object->getWidth(), object->getHeight()))
 			{
 				return false;
 			}
-			break;
-		case TARGET:
-		{
-			switch (agent->getType())
-			{
-			case AGENT:
-				if (lineRectCheck(start_point, end_point, rect_start, width, height))
-				{
-					return true;
-				}
-				break;
-			case PATH_NODE:
-				if (lineRectEdgeCheck(start_point, rect_start, width, height))
-				{
-					return true;
-				}
-				break;
-			default:
-				//error
-				std::cout << "ERROR: " << agent->getType() << std::endl;
-				break;
-			}
 		}
-		break;
-		default:
-			//error
-			std::cout << "ERROR: " << object->getType() << std::endl;
-			break;
-		}
-
+	// Now check if hitting target.
+	auto targetOffset = glm::vec2(target->getWidth() * 0.5f, target->getHeight() * 0.5f);
+	if (lineRectCheck(start_point, end_point, target->getTransform()->position - targetOffset,
+		target->getWidth(), target->getHeight()))
+	{
+		return true;
 	}
-
-	// if the line does not collide with an object that is the target then LOS is false
+	// Nothing hit.
 	return false;
 }
 

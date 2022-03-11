@@ -400,7 +400,7 @@ void Util::DrawFilledRect(const glm::vec2 position, const int width, const int h
 	rectangle.y = position.y;
 	rectangle.w = width;
 	rectangle.h = height;
-		
+
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 	SDL_RenderFillRect(renderer, &rectangle);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -521,4 +521,22 @@ void Util::DrawCapsule(const glm::vec2 position, const int width, const int heig
 	}
 }
 
+float Util::getClosestEdge(glm::vec2 vecA, GameObject* object)
+{
+	auto targOffset = glm::vec2(object->getWidth() * 0.5f, object->getHeight() * 0.5f);
+	auto targTopLeft = object->getTransform()->position - targOffset;
+	SDL_Rect rect = { (int)targTopLeft.x, (int)targTopLeft.y, object->getWidth(), object->getHeight() };
 
+	glm::vec2 sides[4] = { { rect.x + rect.w / 2, rect.y }, // top
+						   { rect.x + rect.w / 2, rect.y + rect.h }, // bottom
+						   { rect.x, rect.y + rect.h / 2 }, // left
+						   { rect.x + rect.w, rect.y + rect.h / 2 } }; // right
+	float dist = Util::distance(vecA, sides[0]);
+	for (int i = 1; i < 4; i++)
+	{
+		float distNew = Util::distance(vecA, sides[i]);
+		if (distNew < dist)
+			dist = distNew;
+	}
+	return dist;
+}
