@@ -26,8 +26,7 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList();
-	if (m_shipIsMoving)
-		m_moveShip();
+	m_CheckShipLOS(m_pTarget);
 }
 
 void PlayScene::clean()
@@ -55,177 +54,107 @@ void PlayScene::handleEvents()
 	}
 }
 
-void PlayScene::m_createObstacle(int x, int y, glm::vec2 offset)
-{
-	m_obstacle = new Obstacle();
-	m_pObstacle.push_back(m_obstacle);
-	m_obstacle->getTransform()->position = m_getTile(x, y)->getTransform()->position + offset;
-	m_obstacle->setGridPosition(x, y);
-	m_getTile(x, y)->setTileStatus(IMPASSABLE);
-	addChild(m_obstacle);
-}
-
-void PlayScene::m_createRandomObstacle()
-{
-	srand((unsigned)time(0));
-	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
-	int count = 0;
-	Tile* pTile;
-
-	while (count < 5)
-	{
-		pTile = m_getTile(rand() % Config::COL_NUM, rand() % Config::ROW_NUM);
-		if (pTile->getTileStatus() == UNVISITED)
-		{
-			m_createObstacle(pTile->getGridPosition().x, pTile->getGridPosition().y, offset);
-			count++;
-		}
-	}
-}
-
 void PlayScene::start()
 {
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
-	// Setup the grid
-	m_buildGrid();
-	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
-	m_currentHeuristic = Heuristic::MANHATTAN;
-
 	m_pTarget = new Target();
-	m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
-	m_pTarget->setGridPosition(15.0f, 11.0f);
-	m_getTile(15, 11)->setTileStatus(GOAL);
+	m_pTarget->getTransform()->position = glm::vec2(600.0f, 300.0f);
 	addChild(m_pTarget);
 
-	/*
-	// Create fixed Obstacle
-	m_createObstacle(10, 2, offset);
-	m_createObstacle(10, 3, offset);
-	m_createObstacle(10, 6, offset);
-
-	// Created random Obstacle
-	m_createRandomObstacle();
-	*/
-
-
 	m_pSpaceShip = new SpaceShip();
-	m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
-	m_pSpaceShip->setGridPosition(1.0f, 3.0f);
-	m_getTile(1, 3)->setTileStatus(START);
-	addChild(m_pSpaceShip);
+	m_pSpaceShip->getTransform()->position = glm::vec2(150.0f, 300.0f);
+	addChild(m_pSpaceShip, 3);
+
+	m_pObstacle1 = new Obstacle();
+	m_pObstacle1->getTransform()->position = glm::vec2(380.0f, 80.0f);
+	m_pObstacle1->setHeight(50);
+	addChild(m_pObstacle1);
+
+	m_pObstacle2 = new Obstacle();
+	m_pObstacle2->getTransform()->position = glm::vec2(380.0f, 280.0f);
+	m_pObstacle2->setHeight(100);
+	addChild(m_pObstacle2);
+
+	m_pObstacle3 = new Obstacle();
+	m_pObstacle3->getTransform()->position = glm::vec2(380.0f, 480.0f);
+	addChild(m_pObstacle3);
+
+	// Setup the grid
+	m_isGridEnabled = false;
+	m_storeObstacles();
+	m_buildGrid();
+	m_toggleGrid(m_isGridEnabled);
 
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "boom", SOUND_SFX);
-
-	m_computeTileCosts();
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
 
 void PlayScene::GUI_Function()
 {
-	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
-
 	// Always open with a NewFrame
 	ImGui::NewFrame();
 
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
 	//ImGui::ShowDemoWindow();
 
-	ImGui::Begin("Lab 5 Debug Properties", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Lab 6 Debug Properties", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
 
 	ImGui::Separator();
 
-	static bool toggleGrid = false;
-	if (ImGui::Checkbox("Toggle Grid", &toggleGrid))
+	if (ImGui::Checkbox("Toggle Grid", &m_isGridEnabled))
 	{
-		m_isGridEnabled = toggleGrid;
-		m_setGridEnabled(m_isGridEnabled);
+		m_toggleGrid(m_isGridEnabled);
 	}
 
 	ImGui::Separator();
 
-	static int radio = static_cast<int>(m_currentHeuristic);
-	ImGui::Text("Heuristic Type");
-	ImGui::RadioButton("Manhattan", &radio, static_cast<int>(MANHATTAN));
-	ImGui::SameLine();
-	ImGui::RadioButton("Euclidean", &radio, static_cast<int>(EUCLIDEAN));
-
-	if (m_currentHeuristic != static_cast<Heuristic>(radio))
+	static int shipPosition[] = { m_pSpaceShip->getTransform()->position.x, m_pSpaceShip->getTransform()->position.y };
+	if (ImGui::SliderInt2("Ship Position", shipPosition, 0, 800))
 	{
-		m_currentHeuristic = static_cast<Heuristic>(radio);
-		m_computeTileCosts();
+		m_pSpaceShip->getTransform()->position.x = shipPosition[0];
+		m_pSpaceShip->getTransform()->position.x = shipPosition[1];
+	}
+
+	// allow ship rotation
+	static int angle;
+	if (ImGui::SliderInt("Ship Direction", &angle, -360, 360))
+	{
+		m_pSpaceShip->setCurrentHeading(angle);
 	}
 
 	ImGui::Separator();
 
-	if (ImGui::Button("Find Shortest Path"))
+	static int targetPosition[] = { m_pTarget->getTransform()->position.x,m_pTarget->getTransform()->position.y };
+	if (ImGui::SliderInt2("Target Position", targetPosition, 0, 800))
 	{
-		m_findShortestPath();
+		m_pSpaceShip->getTransform()->position.x = shipPosition[0];
+		m_pSpaceShip->getTransform()->position.x = shipPosition[1];
 	}
 
 	ImGui::Separator();
 
-	if (ImGui::Button("Start"))
+	for (unsigned i = 0; i < m_pObstacle.size(); i++)
 	{
-		if (!m_shipIsMoving)
+		int obsPosition[] = { m_pObstacle[i]->getTransform()->position.x, m_pObstacle[i]->getTransform()->position.y };
+		std::string label = "Obstacle" + std::to_string(i + 1) + " Position";
+		if (ImGui::SliderInt2(label.c_str(), obsPosition, 0, 800))
 		{
-			m_shipIsMoving = true;
+			m_pObstacle[i]->getTransform()->position.x = obsPosition[0];
+			m_pObstacle[i]->getTransform()->position.y = obsPosition[1];
+			m_buildGrid();
 		}
 	}
 
-	ImGui::SameLine();
-
-	if (ImGui::Button("Reset"))
-	{
-		m_resetPathfinding();
-		/*while (m_pObstacle.size() >= 4)
-		{
-			removeChild(m_pObstacle.at(m_pObstacle.size() - 1));
-			m_pObstacle.pop_back();
-		}*/
-		m_resetPathfinding();
-		//m_createRandomObstacle();
-	}
-
 	ImGui::Separator();
 
-	// Grid position properties
-	start_position[0] = m_pSpaceShip->getGridPosition().x;
-	start_position[1] = m_pSpaceShip->getGridPosition().y;
-	if (ImGui::SliderInt2("Start Position", start_position, 0, Config::COL_NUM - 1))
+	if (ImGui::SliderInt("Obstacle Buffer", &m_ObstacleBuffer, 0, 100)) // Don't need to be static
 	{
-		if (start_position[1] > Config::ROW_NUM - 1)
-		{
-			start_position[1] = Config::ROW_NUM - 1;
-		}
-
-		m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(UNVISITED);
-		m_pSpaceShip->getTransform()->position = m_getTile(start_position[0], start_position[1])->getTransform()->position + offset;
-		m_pSpaceShip->setGridPosition(start_position[0], start_position[1]);
-		m_getTile(m_pSpaceShip->getGridPosition())->setTileStatus(START);
-
+		m_buildGrid();
 	}
-
-	goal_position[0] = m_pTarget->getGridPosition().x;
-	goal_position[1] = m_pTarget->getGridPosition().y;
-	if (ImGui::SliderInt2("Goal Position", goal_position, 0, Config::COL_NUM - 1))
-	{
-		if (goal_position[1] > Config::ROW_NUM - 1)
-		{
-			goal_position[1] = Config::ROW_NUM - 1;
-		}
-
-		m_getTile(m_pTarget->getGridPosition())->setTileStatus(UNVISITED);
-		m_pTarget->getTransform()->position = m_getTile(goal_position[0], goal_position[1])->getTransform()->position + offset;
-		m_pTarget->setGridPosition(goal_position[0], goal_position[1]);
-		m_getTile(m_pTarget->getGridPosition())->setTileStatus(GOAL);
-		m_computeTileCosts();
-	}
-
-	// spaceship properties
 
 	ImGui::End();
 }
@@ -233,267 +162,92 @@ void PlayScene::GUI_Function()
 void PlayScene::m_buildGrid()
 {
 	auto tileSize = Config::TILE_SIZE;
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 
-	// add tiles to the grid
+	m_clearNodes(); // Becasue we rebuild often
+
+	// add PathNodes to the Grid
 	for (int row = 0; row < Config::ROW_NUM; ++row)
 	{
 		for (int col = 0; col < Config::COL_NUM; ++col)
 		{
-			Tile* tile = new Tile(); // create a new empty tile
-			tile->getTransform()->position = glm::vec2(col * tileSize, row * tileSize); // world position
-			tile->setGridPosition(col, row);
-			addChild(tile);
-			tile->addLabels();
-			tile->setEnabled(false);
-			m_pGrid.push_back(tile);
-		}
-	}
-	// Create references (connections) for each file to its neighbours (N,S,E,W)
-	for (int row = 0; row < Config::ROW_NUM; ++row)
-	{
-		for (int col = 0; col < Config::COL_NUM; ++col)
-		{
-			Tile* tile = m_getTile(col, row);
-
-			// If at topmost row
-			if (row == 0)
+			PathNode* path_node = new PathNode();
+			path_node->getTransform()->position = glm::vec2((col * tileSize) + offset.x, (row * tileSize) + offset.y);
+			bool keepNode = true;
+			for (auto obstacle : m_pObstacle)
 			{
-				tile->setNeighbourTile(TOP_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(TOP_TILE, m_getTile(col, row - 1));
-			}
-			// If at rightmost col
-			if (col == Config::COL_NUM - 1)
-			{
-				tile->setNeighbourTile(RIGHT_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(RIGHT_TILE, m_getTile(col + 1, row));
-			}
-			// If at bottommost row
-			if (row == Config::ROW_NUM - 1)
-			{
-				tile->setNeighbourTile(BOTTOM_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(BOTTOM_TILE, m_getTile(col, row + 1));
-			}
-			// If at leftmost col
-			if (col == 0)
-			{
-				tile->setNeighbourTile(LEFT_TILE, nullptr);
-			}
-			else
-			{
-				tile->setNeighbourTile(LEFT_TILE, m_getTile(col - 1, row));
-			}
-		}
-	}
-}
-
-void PlayScene::m_setGridEnabled(bool state)
-{
-	m_isGridEnabled = state;
-
-	for (auto tile : m_pGrid)
-	{
-		tile->setEnabled(m_isGridEnabled);
-		tile->setLabelsEnabled(m_isGridEnabled);
-	}
-}
-
-bool PlayScene::m_getGridEnabled() const
-{
-	return m_isGridEnabled;
-}
-
-void PlayScene::m_computeTileCosts()
-{
-	float distance = 0.0f; // For Euclidean distance
-
-	float dx = 0.0f;
-	float dy = 0.0f;
-
-	for (auto tile : m_pGrid)
-	{
-		dx = m_pTarget->getGridPosition().x - tile->getGridPosition().x; // x2 - x1
-		dy = m_pTarget->getGridPosition().y - tile->getGridPosition().y; // y2 - y1
-		switch (m_currentHeuristic)
-		{
-		case MANHATTAN:
-			distance = abs(dx) + abs(dy);
-			break;
-		case EUCLIDEAN:
-			distance = sqrt(dx * dx + dy * dy); // C^2 = A^2 + B^2
-			break;
-		}
-		tile->setTileCost(distance);
-	}
-}
-
-void PlayScene::m_findShortestPath()
-{
-	// If there's no path, we're good to pathfind
-	if (m_pPathList.empty())
-	{
-		// Step 1 - Add start position to the open list
-		Tile* startTile = m_getTile(m_pSpaceShip->getGridPosition());
-		startTile->setTileStatus(OPEN);
-		m_pOpenList.push_back(startTile);
-
-		bool goalFound = false; // Flag for while loop
-
-		// Step 2 - Iterate until the open list is empty or the goal is found
-		while (!m_pOpenList.empty() && !goalFound)
-		{
-			float min = INFINITY; // INFINITY == Max tile cost
-			Tile* minTile;
-			int minTileIndex = 0;
-			int count = 0;
-			std::vector<Tile*> neighbourList;
-
-			for (int index = 0; index < NUM_OF_NEIGHBOUR_TILES; index++)
-			{
-				//const auto neighbour = m_pOpenList[0]->getNeighbourTile(static_cast<NeighbourTile>(index));
-				if (m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)) == nullptr)
-					continue;
-				if (m_pOpenList[0]->getNeighbourTile(NeighbourTile(index))->getTileStatus() == IMPASSABLE)
-					continue;
-
-				neighbourList.push_back(m_pOpenList[0]->getNeighbourTile(NeighbourTile(index)));
-			}
-
-			for (Tile* neighbour : neighbourList)
-			{
-				if (neighbour->getTileStatus() != GOAL)
+				if (CollisionManager::AABBCheckWithBuffer(path_node, obstacle, m_ObstacleBuffer))
 				{
-					if (neighbour->getTileCost() < min)
-					{
-						min = neighbour->getTileCost();
-						minTile = neighbour;
-						minTileIndex = count;
-					}
-					count++;
-				}
-				else // We have found the goal, yay!
-				{
-					minTile = neighbour;
-					m_pPathList.push_back(minTile);
-					goalFound = true;
-					break; // Stop the search!
+					keepNode = false; // we have collision between node and an obstacle;
 				}
 			}
-			// Remov the reference of the current tile in the open list
-			m_pPathList.push_back(m_pOpenList[0]);
-			m_pOpenList.pop_back();
-			// Add the minTile to the openList
-			m_pOpenList.push_back(minTile);
-			minTile->setTileStatus(OPEN);
-			neighbourList.erase(neighbourList.begin() + minTileIndex);
-			// Push all remaining neighbours onto the closed list
-			for (Tile* neighbour : neighbourList)
+			if (keepNode)
 			{
-				if (neighbour->getTileStatus() == UNVISITED)
+				addChild(path_node);
+				m_pGrid.push_back(path_node);
+			}
+			else delete path_node;
+		}
+	}
+	// if Grid is supposed to be hidden, make it so!
+	m_toggleGrid(m_isGridEnabled);
+}
+
+void PlayScene::m_toggleGrid(bool state)
+{
+	for (auto path_node : m_pGrid)
+	{
+		path_node->setVisible(state);
+	}
+}
+
+void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
+{
+	m_pSpaceShip->setHasLOS(false);
+	// if ship to target distance is less than or equal to LOS Distance
+	auto ShipToTargetDistance = Util::getClosestEdge(m_pSpaceShip->getTransform()->position, target_object);
+	if (ShipToTargetDistance <= m_pSpaceShip->getLOSDistance())
+	{
+		std::vector<DisplayObject*> contactList;
+		for (auto object : getDisplayList())
+		{
+			if (object->getType() == PATH_NODE) continue; // This is an example of a reversed if. A lot of newer tools will prefer this.
+			if ((object->getType() != m_pSpaceShip->getType()) && (object->getType() != target_object->getType()))
+			{
+				// check if object is farther than the target
+				auto ShipToObjectDistance = Util::getClosestEdge(m_pSpaceShip->getTransform()->position, object);
+				if (ShipToObjectDistance <= ShipToTargetDistance)
 				{
-					neighbour->setTileStatus(CLOSED);
-					m_pClosedList.push_back(neighbour);
+					contactList.push_back(object);
 				}
 			}
 		}
-		// Fixes the last two tiles being swapped
-		Tile* goal = m_pPathList.at(m_pPathList.size() - 2);
-		m_pPathList.erase(m_pPathList.end() - 2);
-		m_pPathList.push_back(goal);
+		auto hasLOS = CollisionManager::LOSCheck(m_pSpaceShip, m_pSpaceShip->getTransform()->position + m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getLOSDistance(), contactList, target_object);
+		m_pSpaceShip->setHasLOS(hasLOS);
 	}
 }
 
-void PlayScene::m_displayPathList()
+void PlayScene::m_storeObstacles()
 {
-	for (Tile* node : m_pPathList)
+	for (auto object : getDisplayList())
 	{
-		std::cout << "(" << node->getGridPosition().x << ", "
-			<< node->getGridPosition().y << ")" << std::endl;
-	}
-	std::cout << "Path Length: " << m_pPathList.size() << std::endl;
-}
-
-void PlayScene::m_resetPathfinding()
-{
-	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
-
-	// Clear tile vectors
-	m_pPathList.clear();
-	m_pPathList.shrink_to_fit();
-	m_pOpenList.clear();
-	m_pOpenList.shrink_to_fit();
-	m_pClosedList.clear();
-	m_pClosedList.shrink_to_fit();
-
-	// Reset tile statuses
-	for (Tile* tile : m_pGrid)
-		tile->setTileStatus(UNVISITED);
-
-	// Reset target data
-	m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
-	m_pTarget->setGridPosition(15.0f, 11.0f);
-	m_getTile(15, 11)->setTileStatus(GOAL);
-	goal_position[0] = m_pTarget->getGridPosition().x;
-	goal_position[1] = m_pTarget->getGridPosition().y;
-
-	// Reset ship data
-	m_pSpaceShip->getTransform()->position = m_getTile(1, 3)->getTransform()->position + offset;
-	m_pSpaceShip->setGridPosition(1.0f, 3.0f);
-	m_getTile(1, 3)->setTileStatus(START);
-	start_position[0] = m_pSpaceShip->getGridPosition().x;
-	start_position[1] = m_pSpaceShip->getGridPosition().y;
-
-	Obstacle* obstacle;
-	for (int i = 0; i < m_pObstacle.size(); i++)
-	{
-		obstacle = m_pObstacle[i];
-		m_getTile(obstacle->getGridPosition())->setTileStatus(IMPASSABLE);
-	}
-
-	m_moveCounter = 0;
-	m_shipIsMoving = false;
-}
-
-Tile* PlayScene::m_getTile(int col, int row)
-{
-	return m_pGrid[(row * Config::COL_NUM) + col];
-}
-
-Tile* PlayScene::m_getTile(glm::vec2 grid_position)
-{
-	const auto col = grid_position.x;
-	const auto row = grid_position.y;
-
-	return m_pGrid[(row * Config::COL_NUM) + col];
-}
-
-void PlayScene::m_moveShip()
-{
-	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
-
-	if (m_moveCounter < m_pPathList.size())
-	{
-		m_pSpaceShip->getTransform()->position = m_getTile(m_pPathList[m_moveCounter]->getGridPosition())->getTransform()->position + offset;
-		m_pSpaceShip->setGridPosition(m_pPathList[m_moveCounter]->getGridPosition().x, m_pPathList[m_moveCounter]->getGridPosition().y);
-
-		if (Game::Instance().getFrames() % 20 == 0)
+		if (object->getType() == OBSTACLE)
 		{
-			m_moveCounter++;
+			m_pObstacle.push_back(static_cast<Obstacle*>(object));
 		}
 	}
-	else
+}
+
+void PlayScene::m_clearNodes()
+{
+	m_pGrid.clear();
+	for (auto object : getDisplayList()) // Alternately could iterate through m_pGrid and removeChild
 	{
-		m_shipIsMoving = false;
+		if (object->getType() == PATH_NODE)
+		{
+			removeChild(object); // Does the deallocation of the obejcts through pointer
+		}
 	}
 }
 
-int PlayScene::start_position[2];
-int PlayScene::goal_position[2];
+int PlayScene::m_ObstacleBuffer = 0;

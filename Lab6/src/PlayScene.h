@@ -33,9 +33,9 @@ private:
 	// Game Objects
 	Target* m_pTarget;
 	SpaceShip* m_pSpaceShip;
-	Obstacle* m_obstacle1;
-	Obstacle* m_obstacle2;
-	Obstacle* m_obstacle3;
+	Obstacle* m_pObstacle1;
+	Obstacle* m_pObstacle2;
+	Obstacle* m_pObstacle3;
 
 	// Pathfinding Objects and Functions
 	std::vector<PathNode*> m_pGrid;
