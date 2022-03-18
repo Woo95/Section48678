@@ -33,18 +33,19 @@ private:
 	// Game Objects
 	Target* m_pTarget;
 	SpaceShip* m_pSpaceShip;
-	std::vector<Obstacle*> m_pObstacle;
+	std::vector<Obstacle*> m_pObstacles;
 
 
 	// Pathfinding Objects and Functions
 	std::vector<PathNode*> m_pGrid;
 	void m_buildGrid();
 	void m_toggleGrid(bool state);
-	void m_checkAgentLOS(Agent* agent, DisplayObject* target_object);
+	bool m_checkAgentLOS(Agent* agent, DisplayObject* target_object);
 	bool m_checkPathNodeLOS(PathNode* path_node, DisplayObject* target_object);
 	void m_checkAllNodesWithTarget(DisplayObject* target_object);
-	void m_checkAllNodesWithBoth(DisplayObject* target_object);
+	void m_checkAllNodesWithBoth();
 	void m_clearNodes();
+	void m_setPathNodeLOSDistance(int dist);
 
 	int m_LOSMode; // 0 = nodes visible to target, 1 = nodes visible to player, 2 = nodes visible to both
 	int m_ObstacleBuffer;

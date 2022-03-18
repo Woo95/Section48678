@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 #include "Game.h"
 #include "EventManager.h"
+#include <fstream>
 
 // required for IMGUI
 #include "imgui.h"
@@ -26,7 +27,20 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList();
-	m_CheckShipLOS(m_pTarget);
+	m_checkAgentLOS(m_pSpaceShip, m_pTarget);
+	// Now for the path_nodes LOS
+	switch (m_LOSMode)
+	{
+		case 0:
+			m_checkAllNodesWithTarget(m_pTarget);
+			break;
+		case 1:
+			m_checkAllNodesWithTarget(m_pSpaceShip);
+			break;
+		case 2:
+			m_checkAllNodesWithBoth();
+			break;
+	}
 }
 
 void PlayScene::clean()
@@ -59,6 +73,20 @@ void PlayScene::start()
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
+	// New Obstacle creation
+	std::ifstream inFile("../Assets/data/obstacles.txt");
+	while (!inFile.eof())
+	{
+		Obstacle* obstacle = new Obstacle();
+		float x, y, w, h;
+		inFile >> x >> y >> w >> h;
+		obstacle->getTransform()->position = glm::vec2(x, y);
+		obstacle->setWidth(w);
+		obstacle->setHeight(h);
+		addChild(obstacle);
+		m_pObstacles.push_back(obstacle);
+	}
+
 	m_pTarget = new Target();
 	m_pTarget->getTransform()->position = glm::vec2(600.0f, 300.0f);
 	addChild(m_pTarget);
@@ -67,23 +95,14 @@ void PlayScene::start()
 	m_pSpaceShip->getTransform()->position = glm::vec2(150.0f, 300.0f);
 	addChild(m_pSpaceShip, 3);
 
-	m_pObstacle1 = new Obstacle();
-	m_pObstacle1->getTransform()->position = glm::vec2(380.0f, 80.0f);
-	m_pObstacle1->setHeight(50);
-	addChild(m_pObstacle1);
-
-	m_pObstacle2 = new Obstacle();
-	m_pObstacle2->getTransform()->position = glm::vec2(380.0f, 280.0f);
-	m_pObstacle2->setHeight(100);
-	addChild(m_pObstacle2);
-
-	m_pObstacle3 = new Obstacle();
-	m_pObstacle3->getTransform()->position = glm::vec2(380.0f, 480.0f);
-	addChild(m_pObstacle3);
+	// Setup LOS fields
+	m_LOSMode = 0;
+	m_ObstacleBuffer = 0;
+	m_pathNodeLOSDistance = 1000;
+	m_setPathNodeLOSDistance(m_pathNodeLOSDistance);
 
 	// Setup the grid
 	m_isGridEnabled = false;
-	m_storeObstacles();
 	m_buildGrid();
 	m_toggleGrid(m_isGridEnabled);
 
@@ -137,14 +156,14 @@ void PlayScene::GUI_Function()
 
 	ImGui::Separator();
 
-	for (unsigned i = 0; i < m_pObstacle.size(); i++)
+	for (unsigned i = 0; i < m_pObstacles.size(); i++)
 	{
-		int obsPosition[] = { m_pObstacle[i]->getTransform()->position.x, m_pObstacle[i]->getTransform()->position.y };
+		int obsPosition[] = { m_pObstacles[i]->getTransform()->position.x, m_pObstacles[i]->getTransform()->position.y };
 		std::string label = "Obstacle" + std::to_string(i + 1) + " Position";
 		if (ImGui::SliderInt2(label.c_str(), obsPosition, 0, 800))
 		{
-			m_pObstacle[i]->getTransform()->position.x = obsPosition[0];
-			m_pObstacle[i]->getTransform()->position.y = obsPosition[1];
+			m_pObstacles[i]->getTransform()->position.x = obsPosition[0];
+			m_pObstacles[i]->getTransform()->position.y = obsPosition[1];
 			m_buildGrid();
 		}
 	}
@@ -174,7 +193,7 @@ void PlayScene::m_buildGrid()
 			PathNode* path_node = new PathNode();
 			path_node->getTransform()->position = glm::vec2((col * tileSize) + offset.x, (row * tileSize) + offset.y);
 			bool keepNode = true;
-			for (auto obstacle : m_pObstacle)
+			for (auto obstacle : m_pObstacles)
 			{
 				if (CollisionManager::AABBCheckWithBuffer(path_node, obstacle, m_ObstacleBuffer))
 				{
@@ -201,7 +220,30 @@ void PlayScene::m_toggleGrid(bool state)
 	}
 }
 
-void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
+void PlayScene::m_setPathNodeLOSDistance(int dist)
+{
+
+}
+
+bool PlayScene::m_checkAgentLOS(Agent* agent, DisplayObject* target_object)
+{
+	return false;
+}
+
+bool PlayScene::m_checkPathNodeLOS(PathNode* path_node, DisplayObject* target_object)
+{
+	return false;
+}
+
+void PlayScene::m_checkAllNodesWithTarget(DisplayObject* target_object)
+{
+}
+
+void PlayScene::m_checkAllNodesWithBoth()
+{
+}
+
+bool PlayScene::m_checkAgentLOS(Agent*agent, DisplayObject* target_object)
 {
 	m_pSpaceShip->setHasLOS(false);
 	// if ship to target distance is less than or equal to LOS Distance
@@ -227,17 +269,6 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 	}
 }
 
-void PlayScene::m_storeObstacles()
-{
-	for (auto object : getDisplayList())
-	{
-		if (object->getType() == OBSTACLE)
-		{
-			m_pObstacle.push_back(static_cast<Obstacle*>(object));
-		}
-	}
-}
-
 void PlayScene::m_clearNodes()
 {
 	m_pGrid.clear();
@@ -250,4 +281,4 @@ void PlayScene::m_clearNodes()
 	}
 }
 
-int PlayScene::m_ObstacleBuffer = 0;
+
