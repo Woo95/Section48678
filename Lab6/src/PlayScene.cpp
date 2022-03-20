@@ -388,17 +388,18 @@ void PlayScene::m_checkNodeAgentToTargetPath()
 
 	if (isFind)
 	{
-		glm::vec2 pathMidPoint = shortestPathNode->getTransform()->position;
-
-		auto targetToPathMidPointDirection = pathMidPoint - targetPoint;
-		auto agentToPathMidPointDirection = pathMidPoint - agentPoint;
-
-		// normalize vector
-		targetToPathMidPointDirection = Util::normalize(targetToPathMidPointDirection);
-		agentToPathMidPointDirection = Util::normalize(agentToPathMidPointDirection);
-
-		if (abs(targetToPathMidPointDirection.x) == abs(agentToPathMidPointDirection.x) 
-			&& abs(targetToPathMidPointDirection.y) == abs(agentToPathMidPointDirection.y))
+		bool bObstacle = false;
+		for (auto obstacle : m_pObstacles)
+		{
+			auto targetOffset = glm::vec2(obstacle->getWidth() * 0.5f, obstacle->getHeight() * 0.5f);
+			if (CollisionManager::lineRectCheck(agentPoint, targetPoint, obstacle->getTransform()->position - targetOffset,
+				obstacle->getWidth(), obstacle->getHeight()))
+			{
+				bObstacle = true;
+				break;
+			}
+		}
+		if (!bObstacle)
 		{
 			std::cout << "the path is clear\n";
 		}
