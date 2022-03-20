@@ -24,8 +24,8 @@ void PathNode::draw()
 	// draw node
 	if (hasLOS())
 	{
-		Util::DrawFilledRect(getTransform()->position - glm::vec2(5, 5), getWidth(), getHeight(), 
-			glm::vec4(0.0f, 0.75f, 0.0f, 1.0f));
+		Util::DrawFilledRect(getTransform()->position - glm::vec2(5, 5), getWidth(), getHeight(), getLOSColour());
+			//glm::vec4(0.0f, 0.75f, 0.0f, 1.0f));
 	}
 	else
 		Util::DrawRect(getTransform()->position - glm::vec2(5, 5), getWidth(), getHeight(), getLOSColour());

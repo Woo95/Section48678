@@ -40,6 +40,10 @@ void PlayScene::update()
 	case 2:
 		m_checkAllNodesWithBoth();
 		break;
+	// for finding path
+	case 3:
+		m_checkNodeAgentToTargetPath();
+		break;
 	}
 }
 
@@ -157,6 +161,17 @@ void PlayScene::GUI_Function()
 		m_LOSMode = 2;
 	}
 	if (m_LOSMode == 2)
+	{
+		ImGui::SameLine();
+		ImGui::Text("<Active>");
+	}
+
+	// fourth button
+	if (ImGui::Button("Draw SpaceShip to Target path", { 300, 20 }))
+	{
+		m_LOSMode = 3;
+	}
+	if (m_LOSMode == 3)
 	{
 		ImGui::SameLine();
 		ImGui::Text("<Active>");
@@ -309,6 +324,84 @@ void PlayScene::m_checkAllNodesWithBoth()
 		bool LOSWithSpaceShip = m_checkPathNodeLOS(path_node, m_pSpaceShip);
 		bool LOSWithTarget = m_checkPathNodeLOS(path_node, m_pTarget);
 		path_node->setHasLOS((LOSWithSpaceShip && LOSWithTarget ? true : false));
+	}
+}
+
+void PlayScene::m_checkNodeAgentToTargetPath()
+{
+	glm::vec2 agentPoint = m_pSpaceShip->getTransform()->position;
+	glm::vec2 targetPoint = m_pTarget->getTransform()->position;
+
+	float pathDistance = 999999;
+	float midPathPointAgentDistance = 0;
+	float midPathPointTargetDistance = 0;
+	PathNode* shortestPathNode = nullptr;
+	bool isFind = false;
+	for (auto path_node : m_pGrid)
+	{
+		bool LOSWithSpaceShip = m_checkPathNodeLOS(path_node, m_pSpaceShip);
+		bool LOSWithTarget = m_checkPathNodeLOS(path_node, m_pTarget);
+
+		path_node->setHasLOS(false);
+		path_node->setLOSColour(glm::vec4(1, 0, 0, 1));
+
+		if (LOSWithSpaceShip && LOSWithTarget)
+		{
+			midPathPointAgentDistance = Util::distance(agentPoint, path_node->getTransform()->position);
+			midPathPointTargetDistance = Util::distance(targetPoint, path_node->getTransform()->position);
+			
+			if (pathDistance > midPathPointAgentDistance + midPathPointTargetDistance)
+			{
+				pathDistance = midPathPointAgentDistance + midPathPointTargetDistance;
+				shortestPathNode = path_node;
+				isFind = true;
+			}
+		}
+	}
+
+	if (isFind)
+	{
+		float nodeSize = 40.0f;
+		auto targetOffset = glm::vec2(nodeSize * 0.5f, nodeSize * 0.5f);
+		glm::vec2 pathMidPoint = shortestPathNode->getTransform()->position;
+
+		for (auto path_node : m_pGrid)
+		{
+			// Detect AgentPointLOS to PathMidPoint
+			if (CollisionManager::lineRectCheck(agentPoint, pathMidPoint, path_node->getTransform()->position - targetOffset,
+				nodeSize, nodeSize))
+			{
+				path_node->setHasLOS(true);
+				path_node->setLOSColour(glm::vec4(0, 0, 1, 1));
+			}
+
+			// Detect TargetPointLOS to PathMidPoint
+			if (CollisionManager::lineRectCheck(targetPoint, pathMidPoint, path_node->getTransform()->position - targetOffset,
+				nodeSize, nodeSize))
+			{
+				path_node->setHasLOS(true);
+				path_node->setLOSColour(glm::vec4(0, 0, 1, 1));
+			}
+		}
+	}
+	else std::cout << "there is no possible path\n";
+
+	if (isFind)
+	{
+		glm::vec2 pathMidPoint = shortestPathNode->getTransform()->position;
+
+		auto targetToPathMidPointDirection = pathMidPoint - targetPoint;
+		auto agentToPathMidPointDirection = pathMidPoint - agentPoint;
+
+		// normalize vector
+		targetToPathMidPointDirection = Util::normalize(targetToPathMidPointDirection);
+		agentToPathMidPointDirection = Util::normalize(agentToPathMidPointDirection);
+
+		if (abs(targetToPathMidPointDirection.x) == abs(agentToPathMidPointDirection.x) 
+			&& abs(targetToPathMidPointDirection.y) == abs(agentToPathMidPointDirection.y))
+		{
+			std::cout << "the path is clear\n";
+		}
 	}
 }
 
