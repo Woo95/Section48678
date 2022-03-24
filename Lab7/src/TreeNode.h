@@ -10,8 +10,8 @@ struct TreeNode
 
 	std::string m_name = "";
 
-	TreeNode* m_pLeft = nullptr;
-	TreeNode* m_pRight = nullptr;
+	TreeNode* m_pLeft = nullptr;	// False child
+	TreeNode* m_pRight = nullptr;	// True child
 	TreeNode* m_pParent = nullptr;
 	bool m_isLeaf = false;
 };
