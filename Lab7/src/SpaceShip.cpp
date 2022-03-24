@@ -28,7 +28,15 @@ SpaceShip::SpaceShip()
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 
 	// Fill in action state and patrol code
+	setActionState(NO_ACTION);
 
+	m_patrol.push_back(glm::vec2(760, 40));
+	m_patrol.push_back(glm::vec2(760, 560));
+	m_patrol.push_back(glm::vec2(40, 560));
+	m_patrol.push_back(glm::vec2(40, 40));
+	m_waypoint = 0;
+
+	setTargetPosition(m_patrol[m_waypoint]);
 
 	setType(AGENT);
 }
@@ -52,7 +60,12 @@ void SpaceShip::draw()
 void SpaceShip::update()
 {
 	// Determine which action to perform
-	
+	switch (getActionState())
+	{
+	case PATROL:
+		m_move();
+		break;
+	}
 }
 
 void SpaceShip::clean()
@@ -102,7 +115,11 @@ void SpaceShip::setDesiredVelocity(const glm::vec2 target_position)
 void SpaceShip::Seek()
 {
 	// Find next waypoint:
-	
+	if (Util::distance(m_patrol[m_waypoint], getTransform()->position) <= 10)
+	{
+		if (++m_waypoint == m_patrol.size()) m_waypoint = 0;
+		setTargetPosition(m_patrol[m_waypoint]);
+	}
 
 	setDesiredVelocity(getTargetPosition());
 
