@@ -10,7 +10,7 @@
 #include "Obstacle.h"
 // New Lab 7:
 #include "Background.h"
-// #include "DecisionTree.h"
+#include "DecisionTree.h"
 
 class PlayScene : public Scene
 {
@@ -57,7 +57,7 @@ private:
 	int m_pathNodeLOSDistance;
 
 	// Decision Tree
-	
+	DecisionTree* decisionTree;
 };
 
 #endif /* defined (__PLAY_SCENE__) */

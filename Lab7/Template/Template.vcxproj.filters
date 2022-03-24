@@ -189,6 +189,9 @@
     <ClCompile Include="..\src\RadiusCondition.cpp">
       <Filter>Decision\Condition</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\DecisionTree.cpp">
+      <Filter>Decision\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -392,6 +395,9 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\src\RadiusCondition.h">
       <Filter>Decision\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DecisionTree.h">
+      <Filter>Decision\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
