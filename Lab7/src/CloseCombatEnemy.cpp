@@ -67,7 +67,7 @@ void CloseCombatEnemy::draw()
 	// draw LOS
 	if (EventManager::Instance().isIMGUIActive())
 	{
-		Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * getLOSDistance(), getLOSColour());
+		Util::DrawLine(getTransform()->position, getMiddleLOSEndPoint(), getLOSColour());
 	}
 }
 

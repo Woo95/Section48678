@@ -5,11 +5,12 @@
 #include "Heuristic.h"
 #include "Scene.h"
 #include "Target.h"
-#include "SpaceShip.h"
 #include "PathNode.h"
 #include "Obstacle.h"
 // New Lab 7:
 #include "Background.h"
+#include "CloseCombatEnemy.h"
+//#include "RangedCombatEnemy.h"
 
 class PlayScene : public Scene
 {
@@ -37,7 +38,8 @@ private:
 	// Game Objects
 	Background* m_pBG;
 	Target* m_pTarget;
-	SpaceShip* m_pSpaceShip;
+	CloseCombatEnemy* m_pSpaceShip;
+	// RangedCombatEnemy* m_pSpaceShip
 	std::vector<Obstacle*> m_pObstacles;
 
 	// PathNode Objects and Functions
