@@ -1,15 +1,16 @@
 #pragma once
-#ifndef __SPACE_SHIP__
-#define __SPACE_SHIP__
+#ifndef __CLOSE_COMBAT_ENEMY__
+#define __CLOSE_COMBAT_ENEMY__
 
 #include "Agent.h"
 #include "Sprite.h"
+#include "DecisionTree.h"
 
-class SpaceShip final : public Agent
+class CloseCombatEnemy final : public Agent
 {
 public:
-	SpaceShip();
-	~SpaceShip();
+	CloseCombatEnemy();
+	~CloseCombatEnemy();
 
 	// Inherited via GameObject
 	virtual void draw() override;
@@ -31,6 +32,13 @@ public:
 	void Seek();
 	void LookWhereYoureGoing(glm::vec2 target_direction);
 
+	// new action overrides
+	void Patrol();
+	void MoveToPlayer();
+	// more later...
+
+	const DecisionTree* getTree() { return m_tree; }
+
 private:
 	// private movement variables
 	float m_maxSpeed;
@@ -45,7 +53,11 @@ private:
 
 	// private functions
 	void m_move();
+
+	// decision tree
+	DecisionTree* m_tree;
+	void m_buildTree();
 };
 
 
-#endif /* defined (__SPACE_SHIP__) */
+#endif /* defined (__CLOSE_COMBAT_ENEMY__) */

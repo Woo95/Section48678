@@ -22,6 +22,14 @@ public:
 	LOSCondition* getLOSNode() const;
 	RadiusCondition* getRadiusNode() const;
 	CloseCombatCondition* getCloseCombatNode() const;
+	// RangedCombatCondition* getRangedCombatNode() const;
+	std::vector<TreeNode*>& getTree();
+
+	// new node setters
+	void setLOSNode(LOSCondition* node);
+	void setRadiusNode(RadiusCondition* node);
+	void setCloseCombatNode(CloseCombatCondition* node);
+	// void setRangedCombatNode(RangedCombatCondition* node);
 	void setAgent(Agent* agent);
 
 	// convenience functions
@@ -37,6 +45,7 @@ private:
 	LOSCondition* m_LOSNode;
 	RadiusCondition* m_RadiusNode;
 	CloseCombatCondition* m_CloseCombatNode;
+	//RangedCombatCondition* m_RangedCombatNode;
 
 	std::vector<TreeNode*> m_treeNodeList;
 };
