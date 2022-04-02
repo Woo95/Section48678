@@ -250,11 +250,11 @@ void CloseCombatEnemy::m_buildTree()
 	static_cast<ActionNode*>(moveToLOSNode)->setAgent(this);
 	m_tree->getTree().push_back(moveToLOSNode);
 
-	TreeNode* moveToPlayerNode = m_tree->AddNode(m_tree->getRadiusNode(), new MoveToPlayerAction(), LEFT_TREE_NODE);
+	TreeNode* moveToPlayerNode = m_tree->AddNode(m_tree->getCloseCombatNode(), new MoveToPlayerAction(), LEFT_TREE_NODE);
 	static_cast<ActionNode*>(moveToPlayerNode)->setAgent(this);
 	m_tree->getTree().push_back(moveToPlayerNode);
 
-	TreeNode* attackNode = m_tree->AddNode(m_tree->getRadiusNode(), new AttackAction(), RIGHT_TREE_NODE);
+	TreeNode* attackNode = m_tree->AddNode(m_tree->getCloseCombatNode(), new AttackAction(), RIGHT_TREE_NODE);
 	static_cast<ActionNode*>(attackNode)->setAgent(this);
 	m_tree->getTree().push_back(attackNode);
 }
