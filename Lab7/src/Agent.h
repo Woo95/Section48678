@@ -6,6 +6,9 @@
 #include "NavigationObject.h"
 #include "ActionState.h"
 
+// Added Lab 7b
+#include "Obstacle.h"
+
 class Agent : public NavigationObject
 {
 public:
@@ -50,6 +53,16 @@ public:
 	void updateWhiskers(float a);
 
 	void setActionState(ActionState a) { m_state = a; }
+
+	// New tree actions
+	virtual void Attack() {};
+	virtual void MoveToLOS() {};
+	virtual void MoveToPlayer() {};
+	virtual void MoveToRange() {};
+	virtual void Patrol() {};
+
+	// New LOS utility
+	bool checkAgentLOSToTarget(Agent* agent, DisplayObject* target_object, std::vector<Obstacle*>& obstacles);
 
 private:
 	void m_changeDirection();
