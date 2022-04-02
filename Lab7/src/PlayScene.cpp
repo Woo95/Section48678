@@ -41,8 +41,7 @@ void PlayScene::update()
 		m_checkAllNodesWithBoth();
 		break;
 	}
-	// Make decision. Not necessary every frame. We'll experiment
-	decisionTree->MakeDecision();
+
 }
 
 void PlayScene::clean()
@@ -112,11 +111,6 @@ void PlayScene::start()
 	m_isGridEnabled = false;
 	m_buildGrid();
 	m_toggleGrid(m_isGridEnabled);
-
-	// Create decision tree
-	decisionTree = new DecisionTree(m_pSpaceShip); // Overloaded constructor.
-	decisionTree->Display(); // Optional.
-	// decisionTree->MakeDecision(); // Have it in update
 
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "boom", SOUND_SFX);

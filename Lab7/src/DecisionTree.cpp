@@ -107,33 +107,33 @@ void DecisionTree::MakeDecision()
 	static_cast<ActionNode*>(currentNode)->Action();
 }
 
-void DecisionTree::m_buildTree()
-{
-	// Create and add root node.
-	m_LOSNode = new LOSCondition();
-	m_treeNodeList.push_back(m_LOSNode);
-
-	m_RadiusNode = new RadiusCondition();
-	AddNode(m_LOSNode, m_RadiusNode, LEFT_TREE_NODE);
-	m_treeNodeList.push_back(m_RadiusNode);
-
-	m_CloseCombatNode = new CloseCombatCondition();
-	AddNode(m_LOSNode, m_CloseCombatNode, RIGHT_TREE_NODE);
-	m_treeNodeList.push_back(m_CloseCombatNode);
-
-	// Action nodes
-	TreeNode* patrolNode = AddNode(m_RadiusNode, new PatrolAction(), LEFT_TREE_NODE);
-
-	static_cast<ActionNode*>(patrolNode)->setAgent(m_agent);
-	m_treeNodeList.push_back(patrolNode);
-
-	TreeNode* moveToLOSNode = AddNode(m_RadiusNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
-	m_treeNodeList.push_back(moveToLOSNode);
-
-	TreeNode* moveToPlayerNode = AddNode(m_CloseCombatNode, new MoveToPlayerAction(), LEFT_TREE_NODE);
-	m_treeNodeList.push_back(moveToPlayerNode);
-
-	TreeNode* attackNode = AddNode(m_CloseCombatNode, new AttackAction(), RIGHT_TREE_NODE);
-	m_treeNodeList.push_back(attackNode);
-}
+//void DecisionTree::m_buildTree()
+//{
+//	// Create and add root node.
+//	m_LOSNode = new LOSCondition();
+//	m_treeNodeList.push_back(m_LOSNode);
+//
+//	m_RadiusNode = new RadiusCondition();
+//	AddNode(m_LOSNode, m_RadiusNode, LEFT_TREE_NODE);
+//	m_treeNodeList.push_back(m_RadiusNode);
+//
+//	m_CloseCombatNode = new CloseCombatCondition();
+//	AddNode(m_LOSNode, m_CloseCombatNode, RIGHT_TREE_NODE);
+//	m_treeNodeList.push_back(m_CloseCombatNode);
+//
+//	// Action nodes
+//	TreeNode* patrolNode = AddNode(m_RadiusNode, new PatrolAction(), LEFT_TREE_NODE);
+//
+//	static_cast<ActionNode*>(patrolNode)->setAgent(m_agent);
+//	m_treeNodeList.push_back(patrolNode);
+//
+//	TreeNode* moveToLOSNode = AddNode(m_RadiusNode, new MoveToLOSAction(), RIGHT_TREE_NODE);
+//	m_treeNodeList.push_back(moveToLOSNode);
+//
+//	TreeNode* moveToPlayerNode = AddNode(m_CloseCombatNode, new MoveToPlayerAction(), LEFT_TREE_NODE);
+//	m_treeNodeList.push_back(moveToPlayerNode);
+//
+//	TreeNode* attackNode = AddNode(m_CloseCombatNode, new AttackAction(), RIGHT_TREE_NODE);
+//	m_treeNodeList.push_back(attackNode);
+//}
 

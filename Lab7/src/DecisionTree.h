@@ -38,8 +38,6 @@ private:
 	RadiusCondition* m_RadiusNode;
 	CloseCombatCondition* m_CloseCombatNode;
 
-	void m_buildTree();
-
 	std::vector<TreeNode*> m_treeNodeList;
 };
 
