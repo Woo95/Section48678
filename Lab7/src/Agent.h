@@ -55,14 +55,22 @@ public:
 	void setActionState(ActionState a) { m_state = a; }
 
 	// New tree actions
-	virtual void Attack() {};
-	virtual void MoveToLOS() {};
-	virtual void MoveToPlayer() {};
-	virtual void MoveToRange() {};
-	virtual void Patrol() {};
+	virtual void Attack() {}
+	virtual void MoveToLOS() {}
+	virtual void MoveToPlayer() {}
+	virtual void MoveToRange() {}
+	virtual void Patrol() {}
+	// New for Lab 7c
+	virtual void Flee() {}
+	virtual void WaithBehindCover() {}
+	virtual void MoveToCover() {}
 
 	// New LOS utility
 	bool checkAgentLOSToTarget(Agent* agent, DisplayObject* target_object, std::vector<Obstacle*>& obstacles);
+	
+	int getHealth() { return m_health; }
+	void setHealth(int value) { m_health = value; }
+	void takeDamage(int value) { m_health -= value; } // TODO: add clamp
 
 private:
 	void m_changeDirection();
@@ -88,6 +96,9 @@ private:
 
 	// action state
 	ActionState m_state;
+
+	// New Lab 7c
+	int m_health = 100;
 };
 
 

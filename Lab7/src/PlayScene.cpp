@@ -30,7 +30,7 @@ void PlayScene::update()
 	// Set agent tree conditions
 	// radius condition (distance check)
 	// close combat condition
-	m_pSpaceShip->getTree()->getLOSNode()->setLOS(m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles));
+	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles);
 
 	// Now for the path_nodes LOS
 	switch (m_LOSMode)

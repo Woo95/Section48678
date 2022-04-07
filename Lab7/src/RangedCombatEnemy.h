@@ -1,16 +1,15 @@
 #pragma once
-#ifndef __CLOSE_COMBAT_ENEMY__
-#define __CLOSE_COMBAT_ENEMY__
+#ifndef __RANGED_COMBAT_ENEMY__
+#define __RANGED_COMBAT_ENEMY__
 
 #include "Agent.h"
-#include "Sprite.h"
 #include "DecisionTree.h"
 
-class CloseCombatEnemy final : public virtual Agent
+class RangedCombatEnemy final : public Agent
 {
 public:
-	CloseCombatEnemy();
-	~CloseCombatEnemy();
+	RangedCombatEnemy();
+	~RangedCombatEnemy();
 
 	// Inherited via GameObject
 	virtual void draw() override;
@@ -32,13 +31,13 @@ public:
 	void Seek();
 	void LookWhereYoureGoing(glm::vec2 target_direction);
 
-	// new action functions
+	//New action overrides
+	void Flee();
 	void Patrol();
-	void MoveToLos();
-	void WaithBehindCover();
+	void MoveToLOS();
+	void WaitBehindCover();
 	void MoveToCover();
 	void Attack();
-	void MoveToPlayer();
 
 	const DecisionTree* getTree() { return m_tree; }
 
@@ -57,7 +56,7 @@ private:
 	// private functions
 	void m_move();
 
-	// Decision Tree 
+	//Decision tree
 	DecisionTree* m_tree;
 	void m_buildTree();
 };

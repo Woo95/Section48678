@@ -1,21 +1,29 @@
-#include "CloseCombatEnemy.h"
+#include "RangedCombatEnemy.h"
 #include "Game.h"
 #include "TextureManager.h"
-#include "EventManager.h"
 #include "Util.h"
 #include "AttackAction.h"
 #include "MoveToLOSAction.h"
 #include "MoveToPlayerAction.h"
 #include "PatrolAction.h"
+#include "EventManager.h"
 
-CloseCombatEnemy::CloseCombatEnemy()
+// New Lab 7c
+#include "MoveToLOSAction.h"
+#include "PatrolAction.h"
+#include "FleeAction.h"
+#include "MoveToCoverAction.h"
+#include "MoveToRangeAction.h"
+#include "WaitBehindCoverAction.h"
+
+RangedCombatEnemy::RangedCombatEnemy()
 {
-	TextureManager::Instance().load("../Assets/textures/d7_small.png", "close_enemy");
+	TextureManager::Instance().load("../Assets/textures/d7_small.png", "ranged_enemy");
 
-	const auto size = TextureManager::Instance().getTextureSize("close_enemy");
+	const auto size = TextureManager::Instance().getTextureSize("ranged_enemy");
 	setWidth(size.x);
 	setHeight(size.y);
-	
+
 	getRigidBody()->bounds = glm::vec2(getWidth(), getHeight());
 	getRigidBody()->velocity = glm::vec2(0, 0);
 	getRigidBody()->acceleration = glm::vec2(0, 0);
@@ -27,7 +35,7 @@ CloseCombatEnemy::CloseCombatEnemy()
 	m_maxSpeed = 10.0f; // a maximum number of pixels moved per frame
 	m_turnRate = 5.0f; // a maximum number of degrees to turn each time-step
 	m_accelerationRate = 2.0f; // a maximum number of pixels to add to the velocity each frame
-	
+
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 
@@ -60,7 +68,7 @@ void CloseCombatEnemy::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance().draw("close_enemy", x, y, getCurrentHeading(), 255, isCentered());
+	TextureManager::Instance().draw("ranged_enemy", x, y, getCurrentHeading(), 255, isCentered());
 
 	// draw LOS
 	if (EventManager::Instance().isIMGUIActive())
@@ -166,30 +174,76 @@ void CloseCombatEnemy::LookWhereYoureGoing(const glm::vec2 target_direction)
 	updateWhiskers(getWhiskerAngle());
 }
 
-void CloseCombatEnemy::Patrol()
+void RangedCombatEnemy::Flee()
 {
-	if (getActionState() != PATROL)
+	ActionState action = FLEE;
+	if (getActionState() != action)
 	{
 		// Initialize
-		setActionState(PATROL);
+		setActionState(action);
+	}
+	// Action
+}
+
+void CloseCombatEnemy::Patrol()
+{
+	ActionState action = PATROL;
+	if (getActionState() != action)
+	{
+		// Initialize
+		setActionState(action);
 	}
 	m_move();
 }
 
-void CloseCombatEnemy::MoveToPlayer()
+void CloseCombatEnemy::MoveToLos()
 {
-	if (getActionState() != MOVE_TO_PLAYER)
+	ActionState action = MOVE_TO_LOS;
+	if (getActionState() != action)
 	{
-		// Initialize. Like set move target to player.
-		setActionState(MOVE_TO_PLAYER);
+		// Initialize
+		setActionState(action);
 	}
-	// m_move();
+	// Action
+}
+
+void CloseCombatEnemy::WaithBehindCover()
+{
+	ActionState action = WAIT_BEHIND_COVER;
+	if (getActionState() != action)
+	{
+		// Initialize
+		setActionState(action);
+	}
+	// Action
+}
+
+void CloseCombatEnemy::MoveToCover()
+{
+	ActionState action = MOVE_TO_COVER;
+	if (getActionState() != action)
+	{
+		// Initialize
+		setActionState(action);
+	}
+	// Action
+}
+
+void CloseCombatEnemy::Attack()
+{
+	ActionState action = ATTACK;
+	if (getActionState() != action)
+	{
+		// Initialize
+		setActionState(action);
+	}
+	// Action
 }
 
 void CloseCombatEnemy::m_move()
 {
 	Seek();
-	
+
 	//                                   final Position     position term    velocity term     acceleration term
 	// kinematic equation for motion --> Pf            =      Pi     +     Vi*(time)    +   (0.5)*Ai*(time * time)
 
@@ -203,8 +257,8 @@ void CloseCombatEnemy::m_move()
 
 	// compute the acceleration term
 	const glm::vec2 acceleration_term = getRigidBody()->acceleration * 0.5f;// *dt;
-	
-	
+
+
 	// compute the new position
 	glm::vec2 final_position = initial_position + velocity_term + acceleration_term;
 
@@ -220,31 +274,67 @@ void CloseCombatEnemy::m_move()
 void CloseCombatEnemy::m_buildTree()
 {
 	// Create and add root node.
+	m_tree->setEnemyHealthNode(new EnemyHealthCondition());
+	m_tree->getTree().push_back(m_tree->getEnemyHealthNode());
+
+	// Nodes off new health root
+	TreeNode* fleeNode = m_tree->AddNode(m_tree->getEnemyHealthNode(), new FleeAction(), LEFT_TREE_NODE);
+	fleeNode->setAgent(this);
+	m_tree->getTree().push_back(fleeNode);
+
+	m_tree->setEnemyHitNode(new EnemyHitCondition());
+	m_tree->AddNode(m_tree->getEnemyHealthNode(), m_tree->getEnemyHitNode(), RIGHT_TREE_NODE);
+	m_tree->getTree().push_back(m_tree->getEnemyHitNode());
+	//
+
+	// Node children of enemy hit node
 	m_tree->setPlayerDetectedNode(new PlayerDetectedCondition());
+	m_tree->AddNode(m_tree->getEnemyHitNode(), m_tree->getPlayerDetectedNode(), LEFT_TREE_NODE);
 	m_tree->getTree().push_back(m_tree->getPlayerDetectedNode());
+
+	LOSCondition* losNodeRight = new LOSCondition();
+	m_tree->AddNode(m_tree->getEnemyHitNode(), losNodeRight, RIGHT_TREE_NODE);
+	losNodeRight->setAgent(this);
+	m_tree->getTree().push_back(losNodeRight);
+	//
 
 	TreeNode* patrolNode = m_tree->AddNode(m_tree->getPlayerDetectedNode(), new PatrolAction(), LEFT_TREE_NODE);
 	patrolNode->setAgent(this);
 	m_tree->getTree().push_back(patrolNode);
 
-	LOSCondition* losNode = new LOSCondition();
-	m_tree->AddNode(m_tree->getPlayerDetectedNode(), losNode, RIGHT_TREE_NODE);
-	losNode->setAgent(this);
-	m_tree->getTree().push_back(losNode);
-	
-	TreeNode* moveToLOSNode = m_tree->AddNode(losNode, new MoveToLOSAction(), LEFT_TREE_NODE);
+	// We have a LOS condition already so make a new node of it.
+	LOSCondition* losNodeLeft = new LOSCondition();
+	m_tree->AddNode(m_tree->getPlayerDetectedNode(), losNodeLeft, RIGHT_TREE_NODE);
+	losNodeLeft->setAgent(this);
+	m_tree->getTree().push_back(losNodeLeft);
+
+	// Child nodes of left LOS node (cntrl m+h to collapse, cntrl+m+u to undo)
+	TreeNode* moveToLOSNode = m_tree->AddNode(losNodeLeft, new MoveToLOSAction(), LEFT_TREE_NODE);
 	moveToLOSNode->setAgent(this);
 	m_tree->getTree().push_back(moveToLOSNode);
 
-	m_tree->setCloseCombatNode(new CloseCombatCondition());
-	m_tree->AddNode(losNode, m_tree->getCloseCombatNode(), RIGHT_TREE_NODE);
-	m_tree->getTree().push_back(m_tree->getCloseCombatNode());
+	m_tree->setRangedCombatNode(new RangedCombatCondition());
+	m_tree->AddNode(losNodeLeft, m_tree->getRangedCombatNode(), RIGHT_TREE_NODE);
+	m_tree->getTree().push_back(m_tree->getRangedCombatNode());
 
-	TreeNode* moveToPlayerNode = m_tree->AddNode(m_tree->getCloseCombatNode(), new MoveToPlayerAction(), LEFT_TREE_NODE);
-	moveToPlayerNode->setAgent(this);
-	m_tree->getTree().push_back(moveToPlayerNode);
+	TreeNode* moveToRangeNode = m_tree->AddNode(m_tree->getRangedCombatNode(), new MoveToRangeAction(), LEFT_TREE_NODE);
+	moveToRangeNode->setAgent(this);
+	m_tree->getTree().push_back(moveToRangeNode);
 
-	TreeNode* attackNode = m_tree->AddNode(m_tree->getCloseCombatNode(), new AttackAction(), RIGHT_TREE_NODE);
+	TreeNode* attackNode = m_tree->AddNode(m_tree->getRangedCombatNode(), new AttackAction(), RIGHT_TREE_NODE);
 	attackNode->setAgent(this);
 	m_tree->getTree().push_back(attackNode);
+	//
+
+	// Child nodes of right LOS node
+	TreeNode* waitBehindCoverNode = m_tree->AddNode(losNodeRight, new WaitBehindCoverAction(), LEFT_TREE_NODE);
+	waitBehindCoverNode->setAgent(this);
+	m_tree->getTree().push_back(waitBehindCoverNode);
+
+	TreeNode* moveToCoverNode = m_tree->AddNode(losNodeRight, new MoveToCoverAction(), RIGHT_TREE_NODE);
+	moveToCoverNode->setAgent(this);
+	m_tree->getTree().push_back(moveToCoverNode);
+	//
+
+	std::cout << "Done building tree..." << std::endl;
 }

@@ -195,6 +195,24 @@
     <ClCompile Include="..\src\CloseCombatEnemy.cpp">
       <Filter>Decision\Agents</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\FleeAction.cpp">
+      <Filter>Decision\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EnemyHealthCondition.cpp">
+      <Filter>Decision\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EnemyHitCondition.cpp">
+      <Filter>Decision\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PlayerDetectedCondition.cpp">
+      <Filter>Decision\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RangedCombatCondition.cpp">
+      <Filter>Decision\Condition</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RangedCombatEnemy.cpp">
+      <Filter>Decision\Agents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -405,6 +423,27 @@
     <ClInclude Include="..\src\CloseCombatEnemy.h">
       <Filter>Decision\Agents</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\TorpedoAnimationState.h">
+      <Filter>Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FleeAction.h">
+      <Filter>Decision\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EnemyHealthCondition.h">
+      <Filter>Decision\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EnemyHitCondition.h">
+      <Filter>Decision\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PlayerDetectedCondition.h">
+      <Filter>Decision\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RangedCombatCondition.h">
+      <Filter>Decision\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RangedCombatEnemy.h">
+      <Filter>Decision\Agents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md">
@@ -413,6 +452,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Assets\data\obstacles.txt">
+      <Filter>Data</Filter>
+    </Text>
+    <Text Include="..\Assets\sprites\torpedo.txt">
       <Filter>Data</Filter>
     </Text>
   </ItemGroup>

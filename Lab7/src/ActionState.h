@@ -8,6 +8,9 @@ enum ActionState
 	MOVE_TO_LOS,
 	MOVE_TO_PLAYER,
 	MOVE_TO_RANGE,
-	PATROL
+	MOVE_TO_COVER,
+	WAIT_BEHIND_COVER,
+	PATROL,
+	FLEE
 };
 #endif /* defined (__ACTION_STATE__)*/
