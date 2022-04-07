@@ -7,6 +7,7 @@ enum GameObjectType {
 	PATH_NODE,
 	SPACE_SHIP,
 	OBSTACLE,
+	PROJECTILE,
 	SHIP,
 	TARGET,
 	PLAYER,

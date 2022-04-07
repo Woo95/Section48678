@@ -6,7 +6,7 @@
 #include "Sprite.h"
 #include "DecisionTree.h"
 
-class CloseCombatEnemy final : public Agent
+class CloseCombatEnemy final : public virtual Agent
 {
 public:
 	CloseCombatEnemy();
@@ -32,10 +32,9 @@ public:
 	void Seek();
 	void LookWhereYoureGoing(glm::vec2 target_direction);
 
-	// new action overrides
+	// new action functions
 	void Patrol();
 	void MoveToPlayer();
-	// more later...
 
 	const DecisionTree* getTree() { return m_tree; }
 
@@ -54,7 +53,7 @@ private:
 	// private functions
 	void m_move();
 
-	// decision tree
+	// Decision Tree 
 	DecisionTree* m_tree;
 	void m_buildTree();
 };
