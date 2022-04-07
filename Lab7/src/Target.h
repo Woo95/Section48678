@@ -2,9 +2,9 @@
 #ifndef __TARGET__
 #define __TARGET__
 
-#include "NavigationObject.h"
+#include "Agent.h"
 
-class Target final : public NavigationObject
+class Target final : public virtual Agent
 {
 public:
 	Target();

@@ -33,12 +33,20 @@ void PlayScene::update()
 	float distance = Util::distance(m_pSpaceShip->getTransform()->position,
 		m_pTarget->getTransform()->position);
 	bool isDetected = distance <= 450; // detection distance
-	bool inClose = distance <= 50; // close combat range
+	//bool inClose = distance <= 50; // close combat range
 
 	// if (m_pSpaceShip->getTree()->getPlayerDetectedNode()->getDetected() == false) // uncomment for terminators
-	m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #1
-	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #2
-	m_pSpaceShip->getTree()->getCloseCombatNode()->setIsWithinCombatRange(inClose); // #3
+		//m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #1
+	//m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #2
+	//m_pSpaceShip->getTree()->getCloseCombatNode()->setIsWithinCombatRange(inClose); // #3
+
+	// For ranged enemy:
+	bool inRange = distance >= 200 && distance <= 350; // ranged combat range
+	m_pSpaceShip->getTree()->getEnemyHealthNode()->setHealth(m_pTarget->getHealth() > 25); // #1
+	//m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(false); // #2
+	//m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #3
+	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #4 & #5 or both LOS conditions
+	m_pSpaceShip->getTree()->getRangedCombatNode()->setIsWithinCombatRange(inRange); // #6 
 
 	// Now for the path_nodes LOS
 	switch (m_LOSMode)
@@ -79,6 +87,22 @@ void PlayScene::handleEvents()
 	{
 		TheGame::Instance().changeSceneState(END_SCENE);
 	}
+
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_D)) // Damage enemy.
+	{
+		m_pTarget->takeDamage(25);
+		std::cout << "Target at " << m_pTarget->getHealth() << "%." << std::endl;
+		m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(true);
+		m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(true);
+	}
+
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_R)) // Reset enemy conditions.
+	{
+		m_pTarget->setHealth(100);
+		m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(false);
+		m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(false);
+		std::cout << "Target conditions reset. " << std::endl;
+	}
 }
 
 void PlayScene::start()
@@ -92,7 +116,7 @@ void PlayScene::start()
 	// Intentionally put target here so they can hide in cloud. ;)
 	m_pTarget = new Target();
 	m_pTarget->getTransform()->position = glm::vec2(100.f, 400.f);
-	addChild(m_pTarget);
+	addChild(m_pTarget, 3);
 
 	// New Obstacle creation
 	std::ifstream inFile("../Assets/data/obstacles.txt");
@@ -104,14 +128,15 @@ void PlayScene::start()
 		obstacle->getTransform()->position = glm::vec2(x, y);
 		obstacle->setWidth(w);
 		obstacle->setHeight(h);
-		addChild(obstacle);
+		addChild(obstacle, 4);
 		m_pObstacles.push_back(obstacle);
 	}
 	inFile.close();
 
-	m_pSpaceShip = new CloseCombatEnemy();
+	// m_pSpaceShip = new CloseCombatEnemy();
+	m_pSpaceShip = new RangedCombatEnemy();
 	m_pSpaceShip->getTransform()->position = glm::vec2(400.f, 40.f);
-	addChild(m_pSpaceShip, 3);
+	addChild(m_pSpaceShip, 2);
 
 	// Setup a few fields
 	m_LOSMode = 0;
@@ -128,10 +153,10 @@ void PlayScene::start()
 	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "boom", SOUND_SFX);
 
 	SoundManager::Instance().load("../Assets/audio/mutara.mp3", "mutara", SOUND_MUSIC);
-	//SoundManager::Instance().playMusic("mutara");
+	SoundManager::Instance().playMusic("mutara");
 
 	SoundManager::Instance().load("../Assets/audio/klingon.mp3", "klingon", SOUND_MUSIC);
-	SoundManager::Instance().playMusic("klingon");
+	//SoundManager::Instance().playMusic("klingon");
 	SoundManager::Instance().setAllVolume(16);
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
