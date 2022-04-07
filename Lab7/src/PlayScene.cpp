@@ -30,7 +30,15 @@ void PlayScene::update()
 	// Set agent tree conditions
 	// radius condition (distance check)
 	// close combat condition
-	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles);
+	float distance = Util::distance(m_pSpaceShip->getTransform()->position,
+		m_pTarget->getTransform()->position);
+	bool isDetected = distance <= 450; // detection distance
+	bool inClose = distance <= 50; // close combat range
+
+	// if (m_pSpaceShip->getTree()->getPlayerDetectedNode()->getDetected() == false) // uncomment for terminators
+	m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #1
+	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #2
+	m_pSpaceShip->getTree()->getCloseCombatNode()->setIsWithinCombatRange(inClose); // #3
 
 	// Now for the path_nodes LOS
 	switch (m_LOSMode)
@@ -83,7 +91,7 @@ void PlayScene::start()
 
 	// Intentionally put target here so they can hide in cloud. ;)
 	m_pTarget = new Target();
-	m_pTarget->getTransform()->position = glm::vec2(500.f, 300.f);
+	m_pTarget->getTransform()->position = glm::vec2(100.f, 400.f);
 	addChild(m_pTarget);
 
 	// New Obstacle creation
@@ -124,7 +132,7 @@ void PlayScene::start()
 
 	SoundManager::Instance().load("../Assets/audio/klingon.mp3", "klingon", SOUND_MUSIC);
 	SoundManager::Instance().playMusic("klingon");
-	SoundManager::Instance().setMusicVolume(16);
+	SoundManager::Instance().setAllVolume(16);
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }

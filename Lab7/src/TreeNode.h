@@ -4,8 +4,9 @@
 #include <string>
 #include "Agent.h"
 
-struct TreeNode
+class TreeNode
 {
+public:
 	TreeNode()
 	{
 		m_agent = nullptr;
@@ -22,7 +23,7 @@ struct TreeNode
 	Agent* getAgent() { return m_agent; }
 	void setAgent(Agent* agent) { m_agent = agent; }
 
-protected:
+private:
 	Agent* m_agent;
 };
 
