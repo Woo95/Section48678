@@ -34,9 +34,7 @@ public:
 
 	// new action functions
 	void Patrol();
-	void MoveToLos();
-	void WaithBehindCover();
-	void MoveToCover();
+	void MoveToLOS();
 	void Attack();
 	void MoveToPlayer();
 

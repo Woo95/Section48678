@@ -1,14 +1,10 @@
 #include "RangedCombatEnemy.h"
 #include "Game.h"
 #include "TextureManager.h"
+#include "EventManager.h"
 #include "Util.h"
 #include "AttackAction.h"
-#include "MoveToLOSAction.h"
-#include "MoveToPlayerAction.h"
-#include "PatrolAction.h"
-#include "EventManager.h"
-
-// New Lab 7c
+//New lab 7c
 #include "MoveToLOSAction.h"
 #include "PatrolAction.h"
 #include "FleeAction.h"
@@ -18,7 +14,7 @@
 
 RangedCombatEnemy::RangedCombatEnemy()
 {
-	TextureManager::Instance().load("../Assets/textures/d7_small.png", "ranged_enemy");
+	TextureManager::Instance().load("../Assets/textures/reliant_small.png", "ranged_enemy");
 
 	const auto size = TextureManager::Instance().getTextureSize("ranged_enemy");
 	setWidth(size.x);
@@ -58,10 +54,10 @@ RangedCombatEnemy::RangedCombatEnemy()
 	m_tree->Display(); // Optional.
 }
 
-CloseCombatEnemy::~CloseCombatEnemy()
+RangedCombatEnemy::~RangedCombatEnemy()
 = default;
 
-void CloseCombatEnemy::draw()
+void RangedCombatEnemy::draw()
 {
 	// alias for x and y
 	const auto x = getTransform()->position.x;
@@ -77,57 +73,57 @@ void CloseCombatEnemy::draw()
 	}
 }
 
-void CloseCombatEnemy::update()
+void RangedCombatEnemy::update()
 {
 	// Determine which action to perform
 	m_tree->MakeDecision();
 }
 
-void CloseCombatEnemy::clean()
+void RangedCombatEnemy::clean()
 {
 }
 
-float CloseCombatEnemy::getMaxSpeed() const
+float RangedCombatEnemy::getMaxSpeed() const
 {
 	return m_maxSpeed;
 }
 
-float CloseCombatEnemy::getTurnRate() const
+float RangedCombatEnemy::getTurnRate() const
 {
 	return m_turnRate;
 }
 
-float CloseCombatEnemy::getAccelerationRate() const
+float RangedCombatEnemy::getAccelerationRate() const
 {
 	return m_accelerationRate;
 }
 
-glm::vec2 CloseCombatEnemy::getDesiredVelocity() const
+glm::vec2 RangedCombatEnemy::getDesiredVelocity() const
 {
 	return m_desiredVelocity;
 }
 
-void CloseCombatEnemy::setMaxSpeed(const float speed)
+void RangedCombatEnemy::setMaxSpeed(const float speed)
 {
 	m_maxSpeed = speed;
 }
 
-void CloseCombatEnemy::setTurnRate(const float angle)
+void RangedCombatEnemy::setTurnRate(const float angle)
 {
 	m_turnRate = angle;
 }
 
-void CloseCombatEnemy::setAccelerationRate(const float rate)
+void RangedCombatEnemy::setAccelerationRate(const float rate)
 {
 	m_accelerationRate = rate;
 }
 
-void CloseCombatEnemy::setDesiredVelocity(const glm::vec2 target_position)
+void RangedCombatEnemy::setDesiredVelocity(const glm::vec2 target_position)
 {
 	m_desiredVelocity = Util::normalize(target_position - getTransform()->position);
 }
 
-void CloseCombatEnemy::Seek()
+void RangedCombatEnemy::Seek()
 {
 	// Find next waypoint:
 	if (Util::distance(m_patrol[m_waypoint], getTransform()->position) <= 10)
@@ -145,7 +141,7 @@ void CloseCombatEnemy::Seek()
 	getRigidBody()->acceleration = getCurrentDirection() * getAccelerationRate();
 }
 
-void CloseCombatEnemy::LookWhereYoureGoing(const glm::vec2 target_direction)
+void RangedCombatEnemy::LookWhereYoureGoing(const glm::vec2 target_direction)
 {
 	float target_rotation = Util::signedAngle(getCurrentDirection(), target_direction) - 90;
 
@@ -182,10 +178,10 @@ void RangedCombatEnemy::Flee()
 		// Initialize
 		setActionState(action);
 	}
-	// Action
+
 }
 
-void CloseCombatEnemy::Patrol()
+void RangedCombatEnemy::Patrol()
 {
 	ActionState action = PATROL;
 	if (getActionState() != action)
@@ -196,7 +192,7 @@ void CloseCombatEnemy::Patrol()
 	m_move();
 }
 
-void CloseCombatEnemy::MoveToLos()
+void RangedCombatEnemy::MoveToLOS()
 {
 	ActionState action = MOVE_TO_LOS;
 	if (getActionState() != action)
@@ -204,10 +200,10 @@ void CloseCombatEnemy::MoveToLos()
 		// Initialize
 		setActionState(action);
 	}
-	// Action
+
 }
 
-void CloseCombatEnemy::WaithBehindCover()
+void RangedCombatEnemy::WaitBehindCover()
 {
 	ActionState action = WAIT_BEHIND_COVER;
 	if (getActionState() != action)
@@ -215,10 +211,10 @@ void CloseCombatEnemy::WaithBehindCover()
 		// Initialize
 		setActionState(action);
 	}
-	// Action
+
 }
 
-void CloseCombatEnemy::MoveToCover()
+void RangedCombatEnemy::MoveToCover()
 {
 	ActionState action = MOVE_TO_COVER;
 	if (getActionState() != action)
@@ -226,10 +222,20 @@ void CloseCombatEnemy::MoveToCover()
 		// Initialize
 		setActionState(action);
 	}
-	// Action
+
 }
 
-void CloseCombatEnemy::Attack()
+void RangedCombatEnemy::MoveToRange()
+{
+	ActionState action = MOVE_TO_RANGE;
+	if (getActionState() != action)
+	{
+		// Initialize
+		setActionState(action);
+	}
+}
+
+void RangedCombatEnemy::Attack()
 {
 	ActionState action = ATTACK;
 	if (getActionState() != action)
@@ -237,10 +243,10 @@ void CloseCombatEnemy::Attack()
 		// Initialize
 		setActionState(action);
 	}
-	// Action
+
 }
 
-void CloseCombatEnemy::m_move()
+void RangedCombatEnemy::m_move()
 {
 	Seek();
 
@@ -271,7 +277,7 @@ void CloseCombatEnemy::m_move()
 	getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, getMaxSpeed());
 }
 
-void CloseCombatEnemy::m_buildTree()
+void RangedCombatEnemy::m_buildTree()
 {
 	// Create and add root node.
 	m_tree->setEnemyHealthNode(new EnemyHealthCondition());
@@ -308,7 +314,7 @@ void CloseCombatEnemy::m_buildTree()
 	losNodeLeft->setAgent(this);
 	m_tree->getTree().push_back(losNodeLeft);
 
-	// Child nodes of left LOS node (cntrl m+h to collapse, cntrl+m+u to undo)
+	// Child nodes of left LOS node
 	TreeNode* moveToLOSNode = m_tree->AddNode(losNodeLeft, new MoveToLOSAction(), LEFT_TREE_NODE);
 	moveToLOSNode->setAgent(this);
 	m_tree->getTree().push_back(moveToLOSNode);

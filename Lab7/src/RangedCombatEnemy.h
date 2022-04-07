@@ -5,7 +5,7 @@
 #include "Agent.h"
 #include "DecisionTree.h"
 
-class RangedCombatEnemy final : public Agent
+class RangedCombatEnemy final : public virtual Agent
 {
 public:
 	RangedCombatEnemy();
@@ -37,6 +37,7 @@ public:
 	void MoveToLOS();
 	void WaitBehindCover();
 	void MoveToCover();
+	void MoveToRange();
 	void Attack();
 
 	const DecisionTree* getTree() { return m_tree; }

@@ -167,13 +167,37 @@ void CloseCombatEnemy::LookWhereYoureGoing(const glm::vec2 target_direction)
 }
 
 void CloseCombatEnemy::Patrol()
+
 {
-	if (getActionState() != PATROL)
+	ActionState action = PATROL;
+	if (getActionState() != action)
 	{
 		// Initialize
-		setActionState(PATROL);
+		setActionState(action);
 	}
 	m_move();
+}
+
+void CloseCombatEnemy::MoveToLOS()
+{
+	ActionState action = MOVE_TO_LOS;
+	if (getActionState() != action)
+	{
+		// Initialize
+		setActionState(action);
+	}
+	// action
+}
+
+void CloseCombatEnemy::Attack()
+{
+	ActionState action = ATTACK;
+	if (getActionState() != action)
+	{
+		// Initialize
+		setActionState(action);
+	}
+	// action
 }
 
 void CloseCombatEnemy::MoveToPlayer()
@@ -183,7 +207,7 @@ void CloseCombatEnemy::MoveToPlayer()
 		// Initialize. Like set move target to player.
 		setActionState(MOVE_TO_PLAYER);
 	}
-	// m_move();
+	// action
 }
 
 void CloseCombatEnemy::m_move()

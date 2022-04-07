@@ -62,7 +62,7 @@ public:
 	virtual void Patrol() {}
 	// New for Lab 7c
 	virtual void Flee() {}
-	virtual void WaithBehindCover() {}
+	virtual void WaitBehindCover() {}
 	virtual void MoveToCover() {}
 
 	// New LOS utility
