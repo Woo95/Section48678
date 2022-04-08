@@ -103,6 +103,14 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(false);
 		std::cout << "Target conditions reset. " << std::endl;
 	}
+
+	if (EventManager::Instance().keyPressed(SDL_SCANCODE_F))
+	{
+		m_pTorpedoes.push_back(new Torpedo(5.0f));
+		m_pTorpedoes.back()->getTransform()->position = m_pTarget->getTransform()->position;
+		SoundManager::Instance().playSound("torpedo");
+		addChild(m_pTorpedoes.back(), 2);
+	}
 }
 
 void PlayScene::start()
@@ -151,13 +159,14 @@ void PlayScene::start()
 
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "boom", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/torpedo.ogg", "torpedo", SOUND_SFX);
 
 	SoundManager::Instance().load("../Assets/audio/mutara.mp3", "mutara", SOUND_MUSIC);
 	SoundManager::Instance().playMusic("mutara");
 
 	SoundManager::Instance().load("../Assets/audio/klingon.mp3", "klingon", SOUND_MUSIC);
 	//SoundManager::Instance().playMusic("klingon");
-	SoundManager::Instance().setAllVolume(16);
+	SoundManager::Instance().setAllVolume(8);
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }

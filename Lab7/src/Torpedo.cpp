@@ -11,10 +11,10 @@ Torpedo::Torpedo(float speed): m_currentAnimationState(FIRED),m_speed(speed)
 	setSpriteSheet(TextureManager::Instance().getSpriteSheet("torpedosheet"));
 	
 	// set frame width
-	setWidth(64);
+	//setWidth(64);
 
 	// set frame height
-	setHeight(64);
+	//setHeight(64);
 
 	getTransform()->position = glm::vec2(400.0f, 300.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
