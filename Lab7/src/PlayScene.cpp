@@ -46,7 +46,7 @@ void PlayScene::update()
 	//m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(false); // #2
 	//m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #3
 	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #4 & #5 or both LOS conditions
-	m_pSpaceShip->getTree()->getRangedCombatNode()->setIsWithinCombatRange(inRange); // #6 
+	m_pSpaceShip->getTree()->getRangedCombatNode()->setIsWithinCombatRange(inRange); // #6
 
 	// Now for the path_nodes LOS
 	switch (m_LOSMode)
