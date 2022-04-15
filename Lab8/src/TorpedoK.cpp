@@ -6,7 +6,7 @@ TorpedoK::TorpedoK(float speed, glm::vec2 direction)
 {
 	TextureManager::Instance().loadSpriteSheet(
 		"../Assets/sprites/torpedo.txt",
-		"../Assets/sprites/torped_k.png", 
+		"../Assets/sprites/torpedo_k.png", 
 		"torpedoksheet");
 
 	setSpriteSheet(TextureManager::Instance().getSpriteSheet("torpedoksheet"));

@@ -12,6 +12,8 @@
 #include "CloseCombatEnemy.h"
 #include "RangedCombatEnemy.h"
 #include "Torpedo.h"
+// New Lab 8
+#include "TorpedoK.h"
 
 class PlayScene : public Scene
 {
@@ -47,6 +49,7 @@ private:
 
 	std::vector<Obstacle*> m_pObstacles;
 	std::vector<Torpedo*> m_pTorpedoes;
+	std::vector<TorpedoK*> m_pTorpedoesK; // Bad!
 
 	// PathNode Objects and Functions
 	std::vector<PathNode*> m_pGrid;

@@ -14,7 +14,8 @@
 // New Lab 8
 #include "PlayScene.h"
 
-RangedCombatEnemy::RangedCombatEnemy(Scene* scene) : m_pScene(scene), m_fireCtr(0), m_fireCtrMax(60)
+RangedCombatEnemy::RangedCombatEnemy(Scene* scene) 
+	: m_pScene(scene), m_fireCtr(0), m_fireCtrMax(60)
 {
 	TextureManager::Instance().load("../Assets/textures/d7_small.png", "ranged_enemy");
 

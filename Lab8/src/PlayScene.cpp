@@ -43,8 +43,8 @@ void PlayScene::update()
 	// For ranged enemy:
 	bool inRange = distance >= 200 && distance <= 350; // ranged combat range
 	m_pSpaceShip->getTree()->getEnemyHealthNode()->setHealth(m_pTarget->getHealth() > 25); // #1
-	//m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(false); // #2
-	//m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #3
+	m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(false); // #2
+	m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #3
 	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #4 & #5 or both LOS conditions
 	m_pSpaceShip->getTree()->getRangedCombatNode()->setIsWithinCombatRange(inRange); // #6
 
@@ -142,7 +142,7 @@ void PlayScene::start()
 	inFile.close();
 
 	// m_pSpaceShip = new CloseCombatEnemy();
-	m_pSpaceShip = new RangedCombatEnemy();
+	m_pSpaceShip = new RangedCombatEnemy(this);
 	m_pSpaceShip->getTransform()->position = glm::vec2(400.f, 40.f);
 	addChild(m_pSpaceShip, 2);
 
@@ -160,15 +160,29 @@ void PlayScene::start()
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/thunder.ogg", "boom", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/torpedo.ogg", "torpedo", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/torpedo_k.ogg", "torpedo_k", SOUND_SFX);
 
 	SoundManager::Instance().load("../Assets/audio/mutara.mp3", "mutara", SOUND_MUSIC);
-	SoundManager::Instance().playMusic("mutara");
+	//SoundManager::Instance().playMusic("mutara");
 
 	SoundManager::Instance().load("../Assets/audio/klingon.mp3", "klingon", SOUND_MUSIC);
-	//SoundManager::Instance().playMusic("klingon");
+	SoundManager::Instance().playMusic("klingon");
 	SoundManager::Instance().setAllVolume(8);
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
+}
+
+void PlayScene::SpawnEnemyTorpedo()
+{
+	// Set spawn point and direction.
+	glm::vec2 spawn_pos = m_pSpaceShip->getTransform()->position + m_pSpaceShip->getCurrentDirection() * 30.0f;
+	glm::vec2 steering_direction = m_pTarget->getTransform()->position - spawn_pos;
+	steering_direction = Util::normalize(steering_direction);
+	// Spawn it.
+	m_pTorpedoesK.push_back(new TorpedoK(5.0f, steering_direction));
+	m_pTorpedoesK.back()->getTransform()->position = spawn_pos;
+	SoundManager::Instance().playSound("torpedo_k");
+	addChild(m_pTorpedoesK.back(), 2);
 }
 
 void PlayScene::GUI_Function()
