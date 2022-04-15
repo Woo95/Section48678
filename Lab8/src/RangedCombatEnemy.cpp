@@ -11,10 +11,12 @@
 #include "MoveToCoverAction.h"
 #include "MoveToRangeAction.h"
 #include "WaitBehindCoverAction.h"
+// New Lab 8
+#include "PlayScene.h"
 
-RangedCombatEnemy::RangedCombatEnemy()
+RangedCombatEnemy::RangedCombatEnemy(Scene* scene) : m_pScene(scene), m_fireCtr(0), m_fireCtrMax(60)
 {
-	TextureManager::Instance().load("../Assets/textures/reliant_small.png", "ranged_enemy");
+	TextureManager::Instance().load("../Assets/textures/d7_small.png", "ranged_enemy");
 
 	const auto size = TextureManager::Instance().getTextureSize("ranged_enemy");
 	setWidth(size.x);
@@ -241,9 +243,15 @@ void RangedCombatEnemy::Attack()
 	if (getActionState() != action)
 	{
 		// Initialize
+		m_fireCtr = 0;
 		setActionState(action);
 	}
-
+	// Action
+	if (m_fireCtr++ % m_fireCtrMax == 0)
+	{
+		// Fire torpedo
+		static_cast<PlayScene*>(m_pScene)->SpawnEnemyTorpedo();
+	}
 }
 
 void RangedCombatEnemy::m_move()

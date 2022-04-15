@@ -26,6 +26,9 @@ public:
 	virtual void handleEvents() override;
 	virtual void start() override;
 
+	// New Lab 8
+	void SpawnEnemyTorpedo();
+
 private:
 	// IMGUI Function
 	void GUI_Function();

@@ -3,12 +3,15 @@
 #define __RANGED_COMBAT_ENEMY__
 
 #include "Agent.h"
+#include "Sprite.h"
 #include "DecisionTree.h"
+// New for Lab 8
+#include "Scene.h"
 
 class RangedCombatEnemy final : public virtual Agent
 {
 public:
-	RangedCombatEnemy();
+	RangedCombatEnemy(Scene* scene);
 	~RangedCombatEnemy();
 
 	// Inherited via GameObject
@@ -60,6 +63,10 @@ private:
 	//Decision tree
 	DecisionTree* m_tree;
 	void m_buildTree();
+
+	// New for Lab 8
+	int m_fireCtr, m_fireCtrMax;
+	Scene* m_pScene;
 };
 
 
