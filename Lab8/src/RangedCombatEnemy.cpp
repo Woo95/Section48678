@@ -203,7 +203,6 @@ void RangedCombatEnemy::MoveToLOS()
 		// Initialize
 		setActionState(action);
 	}
-
 }
 
 void RangedCombatEnemy::WaitBehindCover()

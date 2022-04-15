@@ -5,6 +5,7 @@
 #include "Agent.h"
 #include "Sprite.h"
 #include "DecisionTree.h"
+#include "Target.h"
 
 class CloseCombatEnemy final : public virtual Agent
 {
@@ -58,6 +59,9 @@ private:
 	// Decision Tree 
 	DecisionTree* m_tree;
 	void m_buildTree();
+
+	CloseCombatEnemy* m_pSpaceShip;
+	Target* m_pTarget;
 };
 
 

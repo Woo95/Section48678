@@ -187,6 +187,11 @@ void CloseCombatEnemy::MoveToLOS()
 		setActionState(action);
 	}
 	// action
+	m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
+	m_pSpaceShip->setMaxSpeed(3);
+	m_pSpaceShip->setAccelerationRate(20);
+	m_pSpaceShip->getRigidBody()->acceleration = (m_pSpaceShip->getCurrentDirection() * m_pSpaceShip->getAccelerationRate()) * 0.2f;
+	m_pSpaceShip->Seek();
 }
 
 void CloseCombatEnemy::Attack()
