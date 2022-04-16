@@ -34,9 +34,10 @@ void PlayScene::update()
 		m_pTarget->getTransform()->position);
 	bool isDetected = distance <= 450; // detection distance
 	//bool inClose = distance <= 50; // close combat range
+	//if (inClose) m_pSpaceShip->setTarget(m_pTarget);
 
 	// if (m_pSpaceShip->getTree()->getPlayerDetectedNode()->getDetected() == false) // uncomment for terminators
-		//m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #1
+	//	m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #1
 	//m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #2
 	//m_pSpaceShip->getTree()->getCloseCombatNode()->setIsWithinCombatRange(inClose); // #3
 
@@ -141,7 +142,7 @@ void PlayScene::start()
 	}
 	inFile.close();
 
-	// m_pSpaceShip = new CloseCombatEnemy();
+	//m_pSpaceShip = new CloseCombatEnemy();
 	m_pSpaceShip = new RangedCombatEnemy(this);
 	m_pSpaceShip->getTransform()->position = glm::vec2(400.f, 40.f);
 	addChild(m_pSpaceShip, 2);

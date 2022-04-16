@@ -41,6 +41,11 @@ public:
 
 	const DecisionTree* getTree() { return m_tree; }
 
+	void setTarget(Target* target)
+	{
+		m_pTarget = target;
+	}
+
 private:
 	// private movement variables
 	float m_maxSpeed;
