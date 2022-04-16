@@ -209,21 +209,22 @@ void CloseCombatEnemy::MoveToPlayer()
 		setActionState(MOVE_TO_PLAYER);
 	}
 	// action
-	std::cout << "MoveToPlayer" << std::endl;
-
 	// Find Target point:
+	//if (m_pTarget == nullptr)return;
 	setTargetPosition(m_pTarget->getTransform()->position);
 	setDesiredVelocity(getTargetPosition());
 	const glm::vec2 steering_direction = getDesiredVelocity() - getCurrentDirection();
 	LookWhereYoureGoing(steering_direction);
 	getRigidBody()->acceleration = getCurrentDirection() * getAccelerationRate();
 
-
-	////m_pSpaceShip->setTargetPosition(m_pTarget->getTransform()->position);
-	//m_pSpaceShip->setMaxSpeed(3);
-	//m_pSpaceShip->setAccelerationRate(20);
-	//m_pSpaceShip->getRigidBody()->acceleration = (m_pTarget->getCurrentDirection() * m_pTarget->getAccelerationRate()) * 0.2f;
-	//m_pSpaceShip->Seek();
+	const float dt = TheGame::Instance().getDeltaTime();
+	const glm::vec2 initial_position = getTransform()->position;
+	const glm::vec2 velocity_term = getRigidBody()->velocity * dt;
+	const glm::vec2 acceleration_term = getRigidBody()->acceleration * 0.5f;// *dt;
+	glm::vec2 final_position = initial_position + velocity_term + acceleration_term;
+	getTransform()->position = final_position;
+	getRigidBody()->velocity += getRigidBody()->acceleration;
+	getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, getMaxSpeed());
 }
 
 void CloseCombatEnemy::m_move()

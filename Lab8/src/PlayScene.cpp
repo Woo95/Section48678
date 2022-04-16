@@ -33,21 +33,27 @@ void PlayScene::update()
 	float distance = Util::distance(m_pSpaceShip->getTransform()->position,
 		m_pTarget->getTransform()->position);
 	bool isDetected = distance <= 450; // detection distance
-	//bool inClose = distance <= 50; // close combat range
-	//if (inClose) m_pSpaceShip->setTarget(m_pTarget);
+	bool inClose = distance <= 50; // close combat range
+	if (isDetected)
+	{
+		m_pSpaceShip->setActionState(MOVE_TO_PLAYER);
+	}
+	else {
+		m_pSpaceShip->setActionState(MOVE_TO_LOS);
+	}
 
-	// if (m_pSpaceShip->getTree()->getPlayerDetectedNode()->getDetected() == false) // uncomment for terminators
-	//	m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #1
-	//m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #2
-	//m_pSpaceShip->getTree()->getCloseCombatNode()->setIsWithinCombatRange(inClose); // #3
+	 if (m_pSpaceShip->getTree()->getPlayerDetectedNode()->getDetected() == false) // uncomment for terminators
+		m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #1
+	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #2
+	m_pSpaceShip->getTree()->getCloseCombatNode()->setIsWithinCombatRange(inClose); // #3
 
 	// For ranged enemy:
-	bool inRange = distance >= 200 && distance <= 350; // ranged combat range
-	m_pSpaceShip->getTree()->getEnemyHealthNode()->setHealth(m_pTarget->getHealth() > 25); // #1
-	m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(false); // #2
-	m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #3
-	m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #4 & #5 or both LOS conditions
-	m_pSpaceShip->getTree()->getRangedCombatNode()->setIsWithinCombatRange(inRange); // #6
+	//bool inRange = distance >= 200 && distance <= 350; // ranged combat range
+	//m_pSpaceShip->getTree()->getEnemyHealthNode()->setHealth(m_pTarget->getHealth() > 25); // #1
+	//m_pSpaceShip->getTree()->getEnemyHitNode()->setIsHit(false); // #2
+	//m_pSpaceShip->getTree()->getPlayerDetectedNode()->setDetected(isDetected); // #3
+	//m_pSpaceShip->checkAgentLOSToTarget(m_pSpaceShip, m_pTarget, m_pObstacles); // #4 & #5 or both LOS conditions
+	//m_pSpaceShip->getTree()->getRangedCombatNode()->setIsWithinCombatRange(inRange); // #6
 
 	// Now for the path_nodes LOS
 	switch (m_LOSMode)
@@ -142,8 +148,9 @@ void PlayScene::start()
 	}
 	inFile.close();
 
-	//m_pSpaceShip = new CloseCombatEnemy();
-	m_pSpaceShip = new RangedCombatEnemy(this);
+	m_pSpaceShip = new CloseCombatEnemy();
+	m_pSpaceShip->setTarget(m_pTarget);
+	//m_pSpaceShip = new RangedCombatEnemy(this);
 	m_pSpaceShip->getTransform()->position = glm::vec2(400.f, 40.f);
 	addChild(m_pSpaceShip, 2);
 
